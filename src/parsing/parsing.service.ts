@@ -225,7 +225,12 @@ export class ParsingService {
 
     puppeteer
       .use(StealthPlugin())
-      .launch({ headless: true })
+      .launch({
+        headless: true,
+        executablePath:
+          process.env.CHROMIUM_PATH ||
+          './node_modules/puppeteer/.local-chromium/win64-706915/chrome-win/chrome.exe',
+      })
       .then(async (browser) => {
         console.log('Running tests..');
         const page = await browser.newPage();
