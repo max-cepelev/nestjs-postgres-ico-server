@@ -32,6 +32,7 @@ interface BuildingCreationAttrs {
   longitude: number | null;
   img: string | null;
   domRfId: number | null;
+  domClickId: number | null;
   complexId: number;
 }
 
@@ -103,6 +104,9 @@ export class Building extends Model<Building, BuildingCreationAttrs> {
 
   @Column({ type: DataType.INTEGER })
   domRfId: number;
+
+  @Column({ type: DataType.INTEGER })
+  domClickId: number;
 
   @ForeignKey(() => Complex)
   @Column({ type: DataType.INTEGER })

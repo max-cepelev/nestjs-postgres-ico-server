@@ -9,6 +9,11 @@ import getObjectKeysToLowercaseKeys from 'src/helpers/getObjectKeysToLowercase';
 export class LeadsService {
   constructor(@InjectModel(Lead) private leadsRepository: typeof Lead) {}
 
+  async createBulk(dto: CreateLeadDto[]) {
+    const complexes = await this.leadsRepository.bulkCreate(dto);
+    return complexes;
+  }
+
   async create(body: any, referer: string) {
     const hostName = referer ? new URL(referer).host : null;
     const data: Omit<CreateLeadDto, 'uniq_id' | 'host'> =

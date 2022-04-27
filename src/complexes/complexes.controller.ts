@@ -16,7 +16,7 @@ import { CreateComplexDto } from './dto/create-complex-dto';
 export class ComplexesController {
   constructor(private readonly complexesService: ComplexesService) {}
 
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard)
   @Post('bulk')
   bulkCreate(@Body() dto: CreateComplexDto[]) {
     return this.complexesService.bulkCreate(dto);

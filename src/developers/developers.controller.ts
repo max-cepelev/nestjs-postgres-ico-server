@@ -17,7 +17,7 @@ import { UpdateDeveloperDto } from './dto/update-developer-dto';
 export class DevelopersController {
   constructor(private readonly developersService: DevelopersService) {}
 
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard)
   @Post('bulk')
   bulkCreate(@Body() dto: CreateDeveloperDto[]) {
     return this.developersService.bulkCreate(dto);

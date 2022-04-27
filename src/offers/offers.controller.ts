@@ -1,4 +1,5 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { CreateOfferDto } from './dto/create-offer-dto';
 import { OffersService } from './offers.service';
 
@@ -10,16 +11,36 @@ export class OffersController {
     return this.offersService.bulkCreate(dto);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get()
   findAll() {
     return this.offersService.findAll();
   }
 
-  @Get('avarage')
-  findAvarage(
+  @UseGuards(JwtAuthGuard)
+  @Get('building-spaces')
+  findSpacesByBuildings(
     @Body()
-    { complexIds, roomsAmount }: { complexIds: number[]; roomsAmount: number },
+    { buildingIds }: { buildingIds: number[] },
   ) {
-    return this.offersService.findAvarage(complexIds, roomsAmount);
+    return this.offersService.findDataByBuildings(buildingIds);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('buildings')
+  findDataByBuildings(
+    @Body()
+    { buildingIds }: { buildingIds: number[] },
+  ) {
+    return this.offersService.findSpacesByBuildings(buildingIds);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('complexes')
+  findDataByComplexes(
+    @Body()
+    { complexIds }: { complexIds: number[] },
+  ) {
+    return this.offersService.findSpacesByComplexes(complexIds);
   }
 }

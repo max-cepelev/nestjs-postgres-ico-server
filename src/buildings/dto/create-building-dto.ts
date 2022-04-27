@@ -20,5 +20,6 @@ export class CreateBuildingDto {
   readonly longitude: number;
   readonly img: string;
   readonly domRfId: number;
+  readonly domClickId: number;
   readonly complexId: number;
 }

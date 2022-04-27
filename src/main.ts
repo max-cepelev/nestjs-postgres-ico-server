@@ -13,8 +13,6 @@ async function bootstrap() {
       'https://price-putejskaja.permnovostroy.ru',
       'https://price-skvortsy.permnovostroy.ru',
       'https://price-tango.permnovostroy.ru',
-      'https://price-vse-svoi.permnovostroy.ru',
-      'https://price-zapovednyi.permnovostroy.ru',
     ],
     credentials: true,
   });

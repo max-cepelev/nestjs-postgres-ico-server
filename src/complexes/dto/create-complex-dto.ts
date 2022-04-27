@@ -3,4 +3,6 @@ export class CreateComplexDto {
   readonly address: string;
   readonly website: string;
   readonly info: string;
+  readonly domRfId: number | null;
+  readonly domClickId: number | null;
 }

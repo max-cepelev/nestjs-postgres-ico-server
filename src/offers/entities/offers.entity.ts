@@ -23,6 +23,12 @@ export class Offer extends Model<Offer, CreateOfferDto> {
   complexId: number;
 
   @Column({ type: DataType.STRING })
+  building: string;
+
+  @Column({ type: DataType.INTEGER })
+  buildingId: number;
+
+  @Column({ type: DataType.STRING })
   address: string;
 
   @Column({ type: DataType.STRING })

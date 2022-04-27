@@ -17,7 +17,7 @@ import { GroupsService } from './groups.service';
 export class GroupsController {
   constructor(private readonly groupsService: GroupsService) {}
 
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard)
   @Post('bulk')
   bulkCreate(@Body() dto: CreateGroupDto[]) {
     return this.groupsService.bulkCreate(dto);

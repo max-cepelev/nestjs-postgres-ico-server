@@ -20,6 +20,12 @@ export class Complex extends Model<Complex, CreateComplexDto> {
   @Column({ type: DataType.STRING })
   info: string;
 
+  @Column({ type: DataType.INTEGER })
+  domRfId: number;
+
+  @Column({ type: DataType.INTEGER })
+  domClickId: number;
+
   @HasMany(() => Building)
   buildings: Building[];
 }

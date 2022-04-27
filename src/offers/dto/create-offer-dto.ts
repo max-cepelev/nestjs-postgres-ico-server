@@ -4,6 +4,8 @@ export class CreateOfferDto {
   readonly developer: string;
   readonly complex: string;
   readonly complexId: number;
+  readonly building: string;
+  readonly buildingId: number;
   readonly address: string;
   readonly commissioningDate: string;
   readonly price: number;

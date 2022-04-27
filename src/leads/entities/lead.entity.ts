@@ -7,7 +7,7 @@ export class Lead extends Model<Lead, CreateLeadDto> {
   id: number;
 
   @Column({ type: DataType.STRING, unique: true })
-  uniqId: string;
+  uniq_id: string;
 
   @Column({ type: DataType.STRING })
   host: string;
