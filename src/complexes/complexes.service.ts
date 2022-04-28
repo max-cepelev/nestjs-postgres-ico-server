@@ -27,6 +27,14 @@ export class ComplexesService {
     return complexes;
   }
 
+  async findAllByGroup(groupId: number | null) {
+    const complexes = await this.complexesRepository.findAll({
+      where: { groupId: groupId ? groupId : null },
+      order: [['name', 'ASC']],
+    });
+    return complexes;
+  }
+
   async findOne(id: number) {
     const complex = await this.complexesRepository.findByPk(id);
     return complex;

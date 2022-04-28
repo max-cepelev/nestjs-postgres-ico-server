@@ -37,6 +37,18 @@ export class BuildingsController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @Get('complex-dynamics')
+  getDinamicsByComplex(@Query('complexId') complexId: number) {
+    return this.buildingsService.getDynamicsByComplex(complexId);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('dynamics')
+  getDinamicsByBuilding(@Query('buildingId') buildingId: number) {
+    return this.buildingsService.getDynamicsByBuilding(buildingId);
+  }
+
+  @UseGuards(JwtAuthGuard)
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.buildingsService.findOne(+id);

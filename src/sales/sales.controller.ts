@@ -32,8 +32,8 @@ export class SalesController {
 
   @UseGuards(JwtAuthGuard)
   @Get()
-  findAll(@Query('complexId') complexId?: number) {
-    return this.salesService.findAll(complexId);
+  findAll(@Query('buildingId') buildingId?: number) {
+    return this.salesService.findAll(buildingId);
   }
 
   @UseGuards(JwtAuthGuard)

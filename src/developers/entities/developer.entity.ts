@@ -7,6 +7,7 @@ import {
   Model,
   Table,
 } from 'sequelize-typescript';
+import { Complex } from 'src/complexes/entities/complex.entity';
 import { Group } from 'src/groups/entities/group.entity';
 import { Building } from '../../buildings/entities/building.entity';
 import { CreateDeveloperDto } from '../dto/create-developer-dto';

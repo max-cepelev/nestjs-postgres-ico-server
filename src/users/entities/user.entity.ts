@@ -35,7 +35,7 @@ export class User extends Model<User, CreateUserDto> {
   activationLink: string;
 
   @ForeignKey(() => Role)
-  @Column({ type: DataType.INTEGER, defaultValue: 1 })
+  @Column({ type: DataType.INTEGER, defaultValue: 4 })
   roleId: number;
 
   @BelongsTo(() => Role)

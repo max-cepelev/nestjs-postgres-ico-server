@@ -38,14 +38,14 @@ export class SalesService {
         where: { buildingId },
         include: { model: Building },
         attributes: { exclude: ['createdAt', 'updatedAt'] },
-        order: [['name', 'ASC']],
+        order: [['date', 'ASC']],
       });
       return buildings;
     }
     const buildings = await this.salesRepository.findAll({
       include: { model: Building },
       attributes: { exclude: ['createdAt', 'updatedAt'] },
-      order: [['name', 'ASC']],
+      order: [['date', 'ASC']],
     });
     return buildings;
   }

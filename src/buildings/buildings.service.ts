@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { Complex } from 'src/complexes/entities/complex.entity';
+import { Sale } from 'src/sales/entities/sale.entity';
 import { CreateBuildingDto } from './dto/create-building-dto';
 import { UpdateBuildingDto } from './dto/update-building-dto';
 import { Building } from './entities/building.entity';
@@ -82,5 +83,25 @@ export class BuildingsService {
   async remove(id: number) {
     const response = await this.buildingRepository.destroy({ where: { id } });
     return response;
+  }
+
+  async getDynamicsByBuilding(buildingId: number) {
+    const data = await this.buildingRepository.findOne({
+      where: { id: buildingId },
+      include: [{ model: Sale, order: ['date', 'ASC'] }, { model: Complex }],
+      // order: [[Sale, 'date', 'ASC']],
+    });
+
+    return data;
+  }
+
+  async getDynamicsByComplex(complexId: number) {
+    const data = await this.buildingRepository.findAll({
+      where: { complexId },
+      include: [{ model: Sale }, { model: Complex }],
+      // order: [[Sale, 'date', 'ASC']],
+    });
+
+    return data;
   }
 }

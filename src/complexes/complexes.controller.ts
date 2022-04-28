@@ -6,6 +6,7 @@ import {
   Param,
   Post,
   Put,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
@@ -16,7 +17,7 @@ import { CreateComplexDto } from './dto/create-complex-dto';
 export class ComplexesController {
   constructor(private readonly complexesService: ComplexesService) {}
 
-  // @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   @Post('bulk')
   bulkCreate(@Body() dto: CreateComplexDto[]) {
     return this.complexesService.bulkCreate(dto);
@@ -32,6 +33,12 @@ export class ComplexesController {
   @Get()
   findAll() {
     return this.complexesService.findAll();
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('group')
+  findAllByGroup(@Query('groupId') groupId: number | null) {
+    return this.complexesService.findAllByGroup(groupId);
   }
 
   @UseGuards(JwtAuthGuard)

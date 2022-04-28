@@ -6,6 +6,7 @@ import {
   Param,
   Post,
   Put,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
@@ -33,6 +34,12 @@ export class DevelopersController {
   @Get()
   findAll() {
     return this.developersService.findAll();
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('group')
+  findAllByGroup(@Query('groupId') groupId: number | null) {
+    return this.developersService.findAllByGroup(groupId);
   }
 
   @UseGuards(JwtAuthGuard)

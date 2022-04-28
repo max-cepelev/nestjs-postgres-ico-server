@@ -3,8 +3,10 @@ import { AuthService } from './auth.service';
 import { Request, Response } from 'express';
 import { RegistrationDto } from './dto/registration.dto';
 
-const secure = true;
+const secure = false;
 const maxAge = 30 * 24 * 60 * 60 * 1000;
+const sameSite = 'lax';
+const path = '/';
 
 @Controller('auth')
 export class AuthController {
@@ -17,10 +19,11 @@ export class AuthController {
   ) {
     return this.authService.registration(dto).then((res) => {
       response.cookie('refreshToken', res.refreshToken, {
-        sameSite: 'none',
+        sameSite,
         httpOnly: true,
         maxAge,
         secure,
+        path,
       });
       return { user: res.user, token: res.accessToken };
     });
@@ -39,10 +42,11 @@ export class AuthController {
     const { email, password } = body;
     return this.authService.login(email, password).then((res) => {
       response.cookie('refreshToken', res.refreshToken, {
-        sameSite: 'none',
+        sameSite,
         httpOnly: true,
         maxAge,
         secure,
+        path,
       });
       return { user: res.user, token: res.accessToken };
     });
@@ -56,10 +60,11 @@ export class AuthController {
     const refreshToken = request.cookies['refreshToken'];
     return this.authService.refresh(refreshToken).then((res) => {
       response.cookie('refreshToken', res.refreshToken, {
-        sameSite: 'none',
+        sameSite,
         httpOnly: true,
         maxAge,
         secure,
+        path,
       });
       return { user: res.user, token: res.accessToken };
     });

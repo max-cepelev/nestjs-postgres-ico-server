@@ -1,6 +1,6 @@
 export class CreateComplexDto {
   readonly name: string;
-  readonly address: string;
+  readonly shortName: string;
   readonly website: string;
   readonly info: string;
   readonly domRfId: number | null;

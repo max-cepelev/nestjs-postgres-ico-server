@@ -31,27 +31,35 @@ export class DevelopersService {
   }
 
   async create(dto: CreateDeveloperDto) {
-    const complex = await this.developersRepository.create(dto);
-    return complex;
+    const developer = await this.developersRepository.create(dto);
+    return developer;
   }
 
   async findAll() {
-    const complexes = await this.developersRepository.findAll({
+    const developers = await this.developersRepository.findAll({
       order: [['name', 'ASC']],
     });
-    return complexes;
+    return developers;
+  }
+
+  async findAllByGroup(groupId: number | null) {
+    const developers = await this.developersRepository.findAll({
+      where: { groupId: groupId ? groupId : null },
+      order: [['name', 'ASC']],
+    });
+    return developers;
   }
 
   async findOne(id: number) {
-    const complex = await this.developersRepository.findByPk(id);
-    return complex;
+    const developer = await this.developersRepository.findByPk(id);
+    return developer;
   }
 
   async update(id: number, dto: UpdateDeveloperDto) {
-    const complex = await this.developersRepository.update(dto, {
+    const developer = await this.developersRepository.update(dto, {
       where: { id },
     });
-    return complex;
+    return developer;
   }
 
   async remove(id: number) {

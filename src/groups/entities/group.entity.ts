@@ -1,4 +1,5 @@
 import { Column, DataType, HasMany, Model, Table } from 'sequelize-typescript';
+import { Complex } from 'src/complexes/entities/complex.entity';
 import { Developer } from '../../developers/entities/developer.entity';
 import { CreateGroupDto } from '../dto/create-group-dto';
 
@@ -16,6 +17,9 @@ export class Group extends Model<Group, CreateGroupDto> {
 
   @Column({ type: DataType.STRING })
   regions: string;
+
+  @HasMany(() => Complex)
+  complexes: Complex[];
 
   @HasMany(() => Developer)
   developers: Developer[];
