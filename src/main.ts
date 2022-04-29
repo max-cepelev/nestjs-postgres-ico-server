@@ -7,7 +7,13 @@ async function bootstrap() {
   const PORT = process.env.PORT || 5000;
   const app = await NestFactory.create(AppModule);
   app.enableCors({
-    origin: [process.env.ORIGIN],
+    origin: [
+      'https://permnovostroy.ru',
+      'https://price-gavan.permnovostroy.ru',
+      'https://price-putejskaja.permnovostroy.ru',
+      'https://price-skvortsy.permnovostroy.ru',
+      'https://price-tango.permnovostroy.ru',
+    ],
     credentials: true,
   });
   app.setGlobalPrefix('api');
