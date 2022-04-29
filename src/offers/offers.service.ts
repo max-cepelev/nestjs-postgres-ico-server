@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import sequelize, { FindAttributeOptions, Op } from 'sequelize';
+import { getNumArray } from 'src/helpers/numberArrayGenerator';
 import { CreateOfferDto } from './dto/create-offer-dto';
 import { UpdateOfferDto } from './dto/update-offer-dto';
 import { Offer } from './entities/offers.entity';
@@ -16,11 +17,11 @@ const attributes: FindAttributeOptions = [
   [sequelize.fn('MAX', sequelize.col('floor')), 'maxFloor'],
 ];
 
-const oneRoomParams = [0, 25, 30, 35, 40, 45, 50, 55];
-const twoRoomParams = [0, 40, 45, 50, 55, 60, 65, 70];
-const threeRoomParams = [0, 60, 65, 70, 75, 80, 90];
-const fourRoomParams = [0, 75, 80, 85, 90, 95, 100, 105];
-const allParams = [0, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 90];
+const oneRoomParams = getNumArray(25, 55, 5);
+const twoRoomParams = getNumArray(40, 70, 5);
+const threeRoomParams = getNumArray(60, 90, 5);
+const fourRoomParams = getNumArray(75, 105, 5);
+const allParams = getNumArray(25, 90, 5);
 
 @Injectable()
 export class OffersService {
@@ -36,7 +37,7 @@ export class OffersService {
   ) {
     const data = [];
     for (const param of arr) {
-      if (param === 0) {
+      if (param === arr[0]) {
         const resultCount = await this.offersRepository.count({
           where: { [column]: id, roomsAmount, totalArea: { [Op.lt]: arr[1] } },
         });

@@ -32,7 +32,7 @@ export class AuthService {
       name,
       phone,
       activationLink,
-      roleId: 1,
+      roleId: 4,
       isActivated: false,
     });
 
@@ -76,7 +76,15 @@ export class AuthService {
           HttpStatus.BAD_REQUEST,
         );
       } else {
-        await this.usersService.update(id, { isActivated: true });
+        const user = await this.usersService.update(id, { isActivated: true });
+        if (user) {
+          return { message: 'Пользователь активирован' };
+        } else {
+          throw new HttpException(
+            'Ошибка активации',
+            HttpStatus.INTERNAL_SERVER_ERROR,
+          );
+        }
       }
     } else {
       throw new HttpException(

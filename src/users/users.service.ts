@@ -21,13 +21,7 @@ export class UsersService {
         attributes: { exclude: ['createdAt', 'updatedAt'] },
       },
       attributes: {
-        exclude: [
-          'activationLink',
-          'password',
-          'roleId',
-          'createdAt',
-          'updatedAt',
-        ],
+        exclude: ['password', 'roleId', 'createdAt', 'updatedAt'],
       },
     });
     return users;
@@ -79,7 +73,9 @@ export class UsersService {
   }
 
   async update(id: number, dto: UpdateUserDto) {
-    const user = await this.userRepository.update(dto, { where: { id } });
+    const user = await this.userRepository.update(dto, {
+      where: { id },
+    });
     return user;
   }
 

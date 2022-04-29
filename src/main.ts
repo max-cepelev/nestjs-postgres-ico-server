@@ -7,7 +7,7 @@ async function bootstrap() {
   const PORT = process.env.PORT || 5000;
   const app = await NestFactory.create(AppModule);
   app.enableCors({
-    origin: 'http://localhost:3000',
+    origin: [process.env.ORIGIN],
     credentials: true,
   });
   app.setGlobalPrefix('api');
