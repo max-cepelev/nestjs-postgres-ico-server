@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { HttpService } from 'nestjs-http-promise';
-import transformMacroData from 'src/helpers/transformMacroData';
+import { getMacroDataV1, getMacroDataV2 } from 'src/helpers/transformMacroData';
 import { IMacroData } from './entities/macro.data';
 
 const baseUrl = 'https://api.macroserver.ru/estate/export/web/';
@@ -17,7 +17,7 @@ export class MacroService {
         `${baseUrl}zdVc0JVaSr1gKxpbtG7AmVbxgLZHBr5Pg_iPhDrnhK0LHDW2uiK3qruU7cxOFuJ6b46vT-P-RWhbzaAbxAvztbgL8dAaYSLpUK44At3rIB5tvLYr9KKPWUqVCjsLh2SmuY8_cpp8MTYzNDU1MTAxMnw5MGE3OQ/334-web.json`,
         { params },
       );
-      return transformMacroData(response.data);
+      return getMacroDataV1(response.data);
     } catch (error) {
       console.log(error);
       throw new HttpException(
@@ -36,7 +36,7 @@ export class MacroService {
         `${baseUrl}zdVc0JVaSr1gKxpbtG7AmVbxgLZHBr5Pg_iPhDrnhK0LHDW2uiK3qruU7cxOFuJ6b46vT-P-RWhbzaAbxAvztbgL8dAaYSLpUK44At3rIB5tvLYr9KKPWUidCjsLh2SmuY8_cpp8MTYzNTU4OTI3MXxmMzU0Mg/334-web.json`,
         { params },
       );
-      return transformMacroData(response.data);
+      return getMacroDataV1(response.data);
     } catch (error) {
       console.log(error);
       throw new HttpException(
@@ -55,7 +55,7 @@ export class MacroService {
         `${baseUrl}zdVc0JVaSr1gKxpbtG7AmVbxgLZHBr5Pg_iPhDrnhK0LHDW2uiK3qruU7cxOFuJ6b46vT-P-RWhbzaAbxAvztbgL8dAaYSLpUK44At3rIB5tvLYr9KKPWUqZCjsKh2SmuY8_cpp8MTYzNjgzMzIwN3w2OGIzMw/334-web.json`,
         { params },
       );
-      return transformMacroData(response.data);
+      return getMacroDataV1(response.data);
     } catch (error) {
       console.log(error);
       throw new HttpException(
@@ -74,7 +74,7 @@ export class MacroService {
         `${baseUrl}zdVc0JVaSr1gKxpbtG7AmVbxgLZHBr5Pg_iPhDrnhK0LHDW2uiK3qruU7cxOFuJ6b46vT-P-RWhbzaAbxAvztbgL8dAaYSLpUK44At3rIB5tvLYr9KKPWUqcCjoKh2SmuYw_cpp8MTY0MTkwNTkzMXwwMjFiZQ/334-web.json`,
         { params },
       );
-      return transformMacroData(response.data);
+      return getMacroDataV1(response.data);
     } catch (error) {
       console.log(error);
       throw new HttpException(
@@ -91,9 +91,9 @@ export class MacroService {
       };
       const response = await this.httpService.get(
         `https://api.macroserver.ru/estate/export/sdb/H7Whb0yfEyUOMbVk9darbXsfKHjUBwCZe-U0rGZXzBDskXF5bu-sECRBYqaXyKtgZgilcpqgaXiiQVPx9U5I6Hsbq_O30Djw1AKCSdAo9ApwlPx-31ATO2BER2DNp-40qJ-8pUF8MTY1MTIxMjQ4M3w0NTE4MA/507-sdb.json`,
-        { params },
+        { params, timeout: 3000 },
       );
-      return transformMacroData(response.data.records);
+      return getMacroDataV2(response.data.records);
     } catch (error) {
       console.log(error);
       throw new HttpException(

@@ -6,6 +6,7 @@ import { OffersService } from './offers.service';
 @Controller('offers')
 export class OffersController {
   constructor(private readonly offersService: OffersService) {}
+  @UseGuards(JwtAuthGuard)
   @Post('bulk')
   bulkCreate(@Body() dto: CreateOfferDto[]) {
     return this.offersService.bulkCreate(dto);
