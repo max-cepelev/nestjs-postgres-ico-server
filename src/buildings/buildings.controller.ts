@@ -7,8 +7,11 @@ import {
   Post,
   Put,
   Query,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { BuildingsService } from './buildings.service';
 import { CreateBuildingDto } from './dto/create-building-dto';
@@ -31,9 +34,22 @@ export class BuildingsController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @Put(':id/upload')
+  @UseInterceptors(FileInterceptor('img'))
+  uploadImage(@Param('id') id: string, @UploadedFile() img: any) {
+    return this.buildingsService.uploadImage(id, img);
+  }
+
+  @UseGuards(JwtAuthGuard)
   @Get()
   findAll(@Query('complexId') complexId?: number) {
     return this.buildingsService.findAll(complexId);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('sales')
+  findAllWithSales() {
+    return this.buildingsService.findAllWithSales();
   }
 
   @UseGuards(JwtAuthGuard)

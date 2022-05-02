@@ -1,6 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
-import sequelize, { FindAttributeOptions, Op } from 'sequelize';
+import sequelize, {
+  FindAttributeOptions,
+  Op,
+  WhereAttributeHashValue,
+} from 'sequelize';
 import { getNumArray } from 'src/helpers/numberArrayGenerator';
 import { CreateOfferDto } from './dto/create-offer-dto';
 import { UpdateOfferDto } from './dto/update-offer-dto';
@@ -21,13 +25,54 @@ const oneRoomParams = getNumArray(25, 55, 5);
 const twoRoomParams = getNumArray(40, 70, 5);
 const threeRoomParams = getNumArray(60, 90, 5);
 const fourRoomParams = getNumArray(75, 105, 5);
-const allParams = getNumArray(25, 90, 5);
+const allParams = getNumArray(25, 110, 5);
 
 @Injectable()
 export class OffersService {
   constructor(
     @InjectModel(Offer) private offersRepository: typeof Offer, // @InjectBrowser() private readonly browser: Browser,
   ) {}
+
+  async getBuildingsData(buildingIds: number[]) {
+    const buildings = [];
+    for (const buildingId of buildingIds) {
+      const offer = await this.offersRepository.findOne({
+        where: { buildingId },
+      });
+      const oneRoomOffers = await this.offersRepository.count({
+        where: { buildingId, roomsAmount: { [Op.or]: [0, 1] } },
+      });
+      const twoRoomOffers = await this.offersRepository.count({
+        where: { buildingId, roomsAmount: 2 },
+      });
+      const threeRoomOffers = await this.offersRepository.count({
+        where: { buildingId, roomsAmount: 3 },
+      });
+      const fourRoomOffers = await this.offersRepository.count({
+        where: { buildingId, roomsAmount: 4 },
+      });
+      const actualDate = await this.offersRepository.max('updatedAt', {
+        where: { buildingId },
+      });
+      buildings.push({
+        id: offer.buildingId,
+        complex: offer.complex,
+        building: offer.building,
+        address: offer.address,
+        floorsAmount: offer.floorsAmount,
+        commissioningDate: offer.commissioningDate,
+        image: offer.image,
+        oneRoomOffers,
+        twoRoomOffers,
+        threeRoomOffers,
+        fourRoomOffers,
+        actualDate,
+        totalOffers:
+          oneRoomOffers + twoRoomOffers + threeRoomOffers + fourRoomOffers,
+      });
+    }
+    return buildings;
+  }
 
   async getData(
     arr: number[],
@@ -105,38 +150,6 @@ export class OffersService {
       }
     }
     return data;
-  }
-
-  async bulkCreate(dto: CreateOfferDto[]) {
-    const offers = await this.offersRepository.bulkCreate(dto, {
-      updateOnDuplicate: [
-        'image',
-        'developer',
-        'complex',
-        'complexId',
-        'building',
-        'buildingId',
-        'address',
-        'commissioningDate',
-        'price',
-        'totalArea',
-        'floor',
-        'floorsAmount',
-        'roomsAmount',
-        'complexUrl',
-      ],
-    });
-    return offers;
-  }
-
-  async create(dto: CreateOfferDto) {
-    const offer = await this.offersRepository.create(dto);
-    return offer;
-  }
-
-  async findAll() {
-    const offers = await this.offersRepository.findAll();
-    return offers;
   }
 
   async findDataByBuildings(buildingIds: number[]) {
@@ -330,6 +343,118 @@ export class OffersService {
       });
     }
     return result;
+  }
+
+  async getAnalysisData(buildingIds: number[]) {
+    const analysisData: any[] = [];
+
+    for (const param of allParams) {
+      let name: string;
+      let totalArea: WhereAttributeHashValue<number>;
+      if (param === allParams[0]) {
+        name = `0 - ${param}`;
+        totalArea = { [Op.lt]: allParams[1] };
+      } else if (param === allParams[allParams.length - 1]) {
+        name = `${param}+`;
+        totalArea = { [Op.gt]: allParams[allParams.length - 1] };
+      } else {
+        name = `${param} - ${param + 5}`;
+        totalArea = { [Op.between]: [param, param + 5] };
+      }
+      let res = { name };
+      for (const buildingId of buildingIds) {
+        const resultCount = await this.offersRepository.count({
+          where: {
+            buildingId,
+            totalArea,
+          },
+        });
+
+        let count1 = 0;
+        let count2 = 0;
+        let count3 = 0;
+        let count4 = 0;
+
+        if (resultCount > 0) {
+          count1 = await this.offersRepository.count({
+            where: { buildingId, totalArea, roomsAmount: { [Op.or]: [0, 1] } },
+          });
+          count2 = await this.offersRepository.count({
+            where: { buildingId, totalArea, roomsAmount: 2 },
+          });
+          count3 = await this.offersRepository.count({
+            where: { buildingId, totalArea, roomsAmount: 3 },
+          });
+          count4 = await this.offersRepository.count({
+            where: { buildingId, totalArea, roomsAmount: 4 },
+          });
+        }
+
+        const result =
+          resultCount > 0 &&
+          (await this.offersRepository.findAll({
+            where: {
+              buildingId,
+              totalArea,
+            },
+            attributes: [
+              [sequelize.fn('AVG', sequelize.col('price')), 'avgPrice'],
+              [sequelize.fn('MIN', sequelize.col('price')), 'minPrice'],
+              [sequelize.fn('MAX', sequelize.col('price')), 'maxPrice'],
+              [sequelize.fn('MIN', sequelize.col('floor')), 'minFloor'],
+              [sequelize.fn('MAX', sequelize.col('floor')), 'maxFloor'],
+            ],
+          }));
+        res = {
+          ...res,
+          [buildingId]: {
+            data: resultCount > 0 ? result[0] : null,
+            count: resultCount,
+            count1,
+            count2,
+            count3,
+            count4,
+          },
+        };
+      }
+      analysisData.push(res);
+    }
+
+    const buildings = await this.getBuildingsData(buildingIds);
+
+    return { analysisData, buildings };
+  }
+
+  async bulkCreate(dto: CreateOfferDto[]) {
+    const offers = await this.offersRepository.bulkCreate(dto, {
+      updateOnDuplicate: [
+        'image',
+        'developer',
+        'complex',
+        'complexId',
+        'building',
+        'buildingId',
+        'address',
+        'commissioningDate',
+        'price',
+        'totalArea',
+        'floor',
+        'floorsAmount',
+        'roomsAmount',
+        'complexUrl',
+      ],
+    });
+    return offers;
+  }
+
+  async create(dto: CreateOfferDto) {
+    const offer = await this.offersRepository.create(dto);
+    return offer;
+  }
+
+  async findAll() {
+    const offers = await this.offersRepository.findAll();
+    return offers;
   }
 
   async findOne(id: number) {

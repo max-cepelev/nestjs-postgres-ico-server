@@ -31,6 +31,7 @@
     "@nestjs/passport": "^8.2.1",
     "@nestjs/platform-express": "^8.4.4",
     "@nestjs/sequelize": "^8.0.0",
+    "@nestjs/serve-static": "^2.2.2",
     "bcryptjs": "^2.4.3",
     "cookie-parser": "^1.4.6",
     "cross-env": "^7.0.3",

@@ -1,3 +1,4 @@
+import * as path from 'path';
 import { Module } from '@nestjs/common';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { BuildingsModule } from './buildings/buildings.module';
@@ -26,6 +27,7 @@ import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handleba
 import { OffersModule } from './offers/offers.module';
 import { Offer } from './offers/entities/offers.entity';
 import { ConfigModule } from '@nestjs/config';
+import { ServeStaticModule } from '@nestjs/serve-static';
 
 @Module({
   imports: [
@@ -49,6 +51,9 @@ import { ConfigModule } from '@nestjs/config';
           strict: true,
         },
       },
+    }),
+    ServeStaticModule.forRoot({
+      rootPath: path.resolve(__dirname, 'static'),
     }),
     ConfigModule.forRoot({
       envFilePath: `.${process.env.NODE_ENV}.env`,

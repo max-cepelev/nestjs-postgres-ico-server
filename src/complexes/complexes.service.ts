@@ -12,7 +12,14 @@ export class ComplexesService {
 
   async bulkCreate(dto: CreateComplexDto[]) {
     const data = await this.complexesRepository.bulkCreate(dto, {
-      updateOnDuplicate: ['name', 'website', 'info'],
+      updateOnDuplicate: [
+        'name',
+        'shortName',
+        'website',
+        'info',
+        'domRfId',
+        'domClickId',
+      ],
     });
     return data;
   }
@@ -23,7 +30,9 @@ export class ComplexesService {
   }
 
   async findAll() {
-    const complexes = await this.complexesRepository.findAll();
+    const complexes = await this.complexesRepository.findAll({
+      order: [['name', 'ASC']],
+    });
     return complexes;
   }
 

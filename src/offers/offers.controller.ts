@@ -19,12 +19,21 @@ export class OffersController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Get('building-spaces')
+  @Post('building-spaces')
   findSpacesByBuildings(
     @Body()
     { buildingIds }: { buildingIds: number[] },
   ) {
     return this.offersService.findDataByBuildings(buildingIds);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('analysis')
+  getAnalysisData(
+    @Body()
+    { buildingIds }: { buildingIds: number[] },
+  ) {
+    return this.offersService.getAnalysisData(buildingIds);
   }
 
   @UseGuards(JwtAuthGuard)

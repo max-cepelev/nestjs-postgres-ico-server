@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { Complex } from 'src/complexes/entities/complex.entity';
+import { FilesService } from 'src/files/files.service';
 import { Sale } from 'src/sales/entities/sale.entity';
 import { CreateBuildingDto } from './dto/create-building-dto';
 import { UpdateBuildingDto } from './dto/update-building-dto';
@@ -10,6 +11,7 @@ import { Building } from './entities/building.entity';
 export class BuildingsService {
   constructor(
     @InjectModel(Building) private buildingRepository: typeof Building,
+    private fileService: FilesService,
   ) {}
 
   async bulkCreate(dto: CreateBuildingDto[]) {
@@ -47,6 +49,17 @@ export class BuildingsService {
     return response;
   }
 
+  async uploadImage(id: string, img?: File) {
+    const fileName = img ? await this.fileService.createFile(img) : null;
+    const response = await this.buildingRepository.update(
+      { img: fileName },
+      {
+        where: { id },
+      },
+    );
+    return response;
+  }
+
   async findAll(complexId?: number) {
     if (complexId) {
       const response = await this.buildingRepository.findAll({
@@ -59,6 +72,15 @@ export class BuildingsService {
     }
     const response = await this.buildingRepository.findAll({
       include: { model: Complex },
+      attributes: { exclude: ['complexId', 'createdAt', 'updatedAt'] },
+      order: [['name', 'ASC']],
+    });
+    return response;
+  }
+
+  async findAllWithSales() {
+    const response = await this.buildingRepository.findAll({
+      include: [Sale, Complex],
       attributes: { exclude: ['complexId', 'createdAt', 'updatedAt'] },
       order: [['name', 'ASC']],
     });
