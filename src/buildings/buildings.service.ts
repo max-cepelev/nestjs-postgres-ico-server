@@ -37,6 +37,7 @@ export class BuildingsService {
         'longitude',
         'img',
         'domRfId',
+        'domClickId',
         'complexId',
       ],
     });
@@ -65,14 +66,14 @@ export class BuildingsService {
       const response = await this.buildingRepository.findAll({
         where: { complexId },
         include: { model: Complex },
-        attributes: { exclude: ['complexId', 'createdAt', 'updatedAt'] },
+        attributes: { exclude: ['createdAt', 'updatedAt'] },
         order: [['name', 'ASC']],
       });
       return response;
     }
     const response = await this.buildingRepository.findAll({
       include: { model: Complex },
-      attributes: { exclude: ['complexId', 'createdAt', 'updatedAt'] },
+      attributes: { exclude: ['createdAt', 'updatedAt'] },
       order: [['name', 'ASC']],
     });
     return response;
@@ -80,8 +81,8 @@ export class BuildingsService {
 
   async findAllWithSales() {
     const response = await this.buildingRepository.findAll({
-      include: [Sale, Complex],
-      attributes: { exclude: ['complexId', 'createdAt', 'updatedAt'] },
+      include: [Complex, Sale],
+      attributes: { exclude: ['createdAt', 'updatedAt'] },
       order: [['name', 'ASC']],
     });
     return response;
@@ -90,7 +91,7 @@ export class BuildingsService {
   async findOne(id: number) {
     const response = await this.buildingRepository.findByPk(id, {
       include: { model: Complex },
-      attributes: { exclude: ['complexId', 'createdAt', 'updatedAt'] },
+      attributes: { exclude: ['createdAt', 'updatedAt'] },
     });
     return response;
   }
