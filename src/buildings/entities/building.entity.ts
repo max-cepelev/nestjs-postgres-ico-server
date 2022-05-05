@@ -15,7 +15,7 @@ interface BuildingCreationAttrs {
   name: string;
   address: string;
   commissioningDate: Date | null;
-  keyIssuanceDate: Date | null;
+  commissioned: boolean;
   propertyClass: string | null;
   wallMaterial: string | null;
   decorType: string | null;
@@ -34,6 +34,7 @@ interface BuildingCreationAttrs {
   domRfId: number | null;
   domClickId: number | null;
   complexId: number;
+  developerId: number;
 }
 
 @Table({ tableName: 'buildings' })
@@ -54,8 +55,8 @@ export class Building extends Model<Building, BuildingCreationAttrs> {
   @Column({ type: DataType.DATE })
   commissioningDate: Date;
 
-  @Column({ type: DataType.DATE })
-  keyIssuanceDate: Date;
+  @Column({ type: DataType.BOOLEAN, defaultValue: false })
+  commissioned: boolean;
 
   @Column({ type: DataType.STRING })
   propertyClass: string;

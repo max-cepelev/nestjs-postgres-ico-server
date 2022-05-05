@@ -3,7 +3,7 @@ export class CreateBuildingDto {
   readonly name: string;
   readonly address: string;
   readonly commissioningDate: Date;
-  readonly keyIssuanceDate: Date;
+  readonly commissioned: boolean;
   readonly propertyClass: string;
   readonly wallMaterial: string;
   readonly decorType: string;
@@ -22,4 +22,5 @@ export class CreateBuildingDto {
   readonly domRfId: number;
   readonly domClickId: number;
   readonly complexId: number;
+  readonly developerId: number;
 }

@@ -20,7 +20,7 @@ export class BuildingsService {
         'name',
         'address',
         'commissioningDate',
-        'keyIssuanceDate',
+        'commissioned',
         'propertyClass',
         'wallMaterial',
         'decorType',
@@ -39,6 +39,7 @@ export class BuildingsService {
         'domRfId',
         'domClickId',
         'complexId',
+        'developerId',
       ],
     });
 
