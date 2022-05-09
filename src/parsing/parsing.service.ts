@@ -3,6 +3,9 @@ import puppeteer from 'puppeteer-extra';
 // import { InjectBrowser } from 'nest-puppeteer';
 import StealthPlugin from 'puppeteer-extra-plugin-stealth';
 
+const searchURL =
+  'https://perm.domclick.ru/search?deal_type=sale&category=living&offer_type=layout&with_domclick_offers=1&from_developer=1&offset=0';
+
 @Injectable()
 export class ParsingService {
   async startScrapping() {
@@ -366,5 +369,32 @@ export class ParsingService {
       });
 
     return { message: 'Ok' };
+  }
+
+  async test() {
+    puppeteer
+      .use(StealthPlugin())
+      .launch({
+        headless: true,
+      })
+      .then(async (browser) => {
+        const page = await browser.newPage();
+
+        await page.goto(searchURL, { waitUntil: 'load' });
+        await page.waitForSelector('[data-test="offers-list__item"]');
+
+        const lastPageNum = await page.evaluate(() => {
+          const num = document.querySelector(
+            '[data-test=pagination-last-page]',
+          );
+          return num ? num.textContent : 1;
+        });
+
+        page.on('response', async (response) => {
+          console.log(response.url());
+          // await parsing(items);
+        });
+      });
+    return { message: 'OK' };
   }
 }

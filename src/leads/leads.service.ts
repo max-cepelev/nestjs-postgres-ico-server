@@ -16,8 +16,7 @@ export class LeadsService {
 
   async create(body: any, referer: string) {
     const hostName = referer ? new URL(referer).host : null;
-    const data: Omit<CreateLeadDto, 'uniq_id' | 'host'> =
-      getObjectKeysToLowercaseKeys(body);
+    const data: any = getObjectKeysToLowercaseKeys(body);
     const dto: CreateLeadDto = {
       uniq_id: uniqid(),
       host: hostName,
@@ -32,12 +31,12 @@ export class LeadsService {
       utm_campaign: data.utm_campaign || null,
       utm_term: data.utm_term || null,
     };
-    const complex = await this.leadsRepository.create(dto);
-    return complex;
+    const lead = await this.leadsRepository.create(dto);
+    return lead;
   }
 
   async findAll() {
-    const complexes = await this.leadsRepository.findAll();
-    return complexes;
+    const leads = await this.leadsRepository.findAll();
+    return leads;
   }
 }

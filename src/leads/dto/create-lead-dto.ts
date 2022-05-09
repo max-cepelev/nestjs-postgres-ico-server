@@ -1,6 +1,6 @@
 export class CreateLeadDto {
   uniq_id: string;
-  host: string;
+  host: string | null;
   name: string | null;
   phone: string | null;
   email: string | null;

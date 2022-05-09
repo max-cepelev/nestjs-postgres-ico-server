@@ -7,6 +7,6 @@ export class ParsingController {
 
   @Get()
   startParsing() {
-    return this.parsingService.startScrapping();
+    return this.parsingService.test();
   }
 }

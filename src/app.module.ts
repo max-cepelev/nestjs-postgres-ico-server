@@ -23,7 +23,6 @@ import { Token } from './tokens/entities/token.entity';
 import { TokensModule } from './tokens/tokens.module';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
-// import { ParsingModule } from './parsing/parsing.module';
 import { OffersModule } from './offers/offers.module';
 import { Offer } from './offers/entities/offers.entity';
 import { ConfigModule } from '@nestjs/config';
@@ -91,7 +90,6 @@ import { ServeStaticModule } from '@nestjs/serve-static';
     UsersModule,
     AuthModule,
     MacroModule,
-    // ParsingModule,
     OffersModule,
   ],
   controllers: [],

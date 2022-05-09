@@ -28,41 +28,41 @@ export class SalesService {
   }
 
   async create(dto: CreateSaleDto) {
-    const building = await this.salesRepository.create(dto);
-    return building;
+    const sale = await this.salesRepository.create(dto);
+    return sale;
   }
 
   async findAll(buildingId?: number) {
     if (buildingId) {
-      const buildings = await this.salesRepository.findAll({
+      const sales = await this.salesRepository.findAll({
         where: { buildingId },
         include: { model: Building },
         attributes: { exclude: ['createdAt', 'updatedAt'] },
         order: [['date', 'ASC']],
       });
-      return buildings;
+      return sales;
     }
-    const buildings = await this.salesRepository.findAll({
+    const sales = await this.salesRepository.findAll({
       include: { model: Building },
       attributes: { exclude: ['createdAt', 'updatedAt'] },
       order: [['date', 'ASC']],
     });
-    return buildings;
+    return sales;
   }
 
   async findOne(id: number) {
-    const building = await this.salesRepository.findByPk(id, {
+    const sale = await this.salesRepository.findByPk(id, {
       include: { model: Building },
       attributes: { exclude: ['createdAt', 'updatedAt'] },
     });
-    return building;
+    return sale;
   }
 
   async update(id: number, dto: UpdateSaleDto) {
-    const building = await this.salesRepository.update(dto, {
+    const sale = await this.salesRepository.update(dto, {
       where: { id },
     });
-    return building;
+    return sale;
   }
 
   async remove(id: number) {
