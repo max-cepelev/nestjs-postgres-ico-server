@@ -15,7 +15,7 @@ export class MacroService {
       };
       const response = await this.httpService.get<IMacroData[]>(
         `${baseUrl}zdVc0JVaSr1gKxpbtG7AmVbxgLZHBr5Pg_iPhDrnhK0LHDW2uiK3qruU7cxOFuJ6b46vT-P-RWhbzaAbxAvztbgL8dAaYSLpUK44At3rIB5tvLYr9KKPWUqVCjsLh2SmuY8_cpp8MTYzNDU1MTAxMnw5MGE3OQ/334-web.json`,
-        { params },
+        { params, timeout: 3000 },
       );
       return getMacroDataV1(response.data);
     } catch (error) {
@@ -53,7 +53,7 @@ export class MacroService {
       };
       const response = await this.httpService.get(
         `${baseUrl}zdVc0JVaSr1gKxpbtG7AmVbxgLZHBr5Pg_iPhDrnhK0LHDW2uiK3qruU7cxOFuJ6b46vT-P-RWhbzaAbxAvztbgL8dAaYSLpUK44At3rIB5tvLYr9KKPWUqZCjsKh2SmuY8_cpp8MTYzNjgzMzIwN3w2OGIzMw/334-web.json`,
-        { params },
+        { params, timeout: 3000 },
       );
       return getMacroDataV1(response.data);
     } catch (error) {
@@ -72,7 +72,7 @@ export class MacroService {
       };
       const response = await this.httpService.get(
         `${baseUrl}zdVc0JVaSr1gKxpbtG7AmVbxgLZHBr5Pg_iPhDrnhK0LHDW2uiK3qruU7cxOFuJ6b46vT-P-RWhbzaAbxAvztbgL8dAaYSLpUK44At3rIB5tvLYr9KKPWUqcCjoKh2SmuYw_cpp8MTY0MTkwNTkzMXwwMjFiZQ/334-web.json`,
-        { params },
+        { params, timeout: 3000 },
       );
       return getMacroDataV1(response.data);
     } catch (error) {
