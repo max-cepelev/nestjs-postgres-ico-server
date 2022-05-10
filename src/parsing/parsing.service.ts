@@ -4,7 +4,7 @@ import puppeteer from 'puppeteer-extra';
 import StealthPlugin from 'puppeteer-extra-plugin-stealth';
 
 const searchURL =
-  'https://perm.domclick.ru/search?deal_type=sale&category=living&offer_type=layout&with_domclick_offers=1&from_developer=1&offset=0';
+  'https://perm.domclick.ru/search?category=living&deal_type=sale&from=topline2020&ne=58.177162%2C56.656484&offer_type=complex&offset=0&sw=57.867842%2C55.802366&with_domclick_offers=1&utm_referrer=https%3A%2F%2Fperm.domclick.ru%2Fcard%2Fsale__new_flat__1521328127';
 
 @Injectable()
 export class ParsingService {
@@ -372,6 +372,7 @@ export class ParsingService {
   }
 
   async test() {
+    const url = 'http://books.toscrape.com';
     puppeteer
       .use(StealthPlugin())
       .launch({
@@ -380,21 +381,24 @@ export class ParsingService {
       .then(async (browser) => {
         const page = await browser.newPage();
 
-        await page.goto(searchURL, { waitUntil: 'load' });
-        await page.waitForSelector('[data-test="offers-list__item"]');
+        await page.goto(url, { waitUntil: 'load' });
+        await page.waitForSelector('.page_inner');
 
-        const lastPageNum = await page.evaluate(() => {
-          const num = document.querySelector(
-            '[data-test=pagination-last-page]',
+        const urls = await page.$$eval('section ol > li', (links) => {
+          // Make sure the book to be scraped is in stock
+          links = links.filter(
+            (link) =>
+              link.querySelector('.instock.availability > i').textContent !==
+              'In stock',
           );
-          return num ? num.textContent : 1;
+          // Extract the links from the data
+          const urls = links.map((el) =>
+            el.querySelector('h3 > a').getAttribute('href'),
+          );
+          return urls;
         });
-
-        page.on('response', async (response) => {
-          console.log(response.url());
-          // await parsing(items);
-        });
+        console.log(urls);
       });
-    return { message: 'OK' };
+    return { message: 'ok' };
   }
 }
