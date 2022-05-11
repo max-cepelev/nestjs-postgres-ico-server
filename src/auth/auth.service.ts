@@ -13,6 +13,7 @@ export class AuthService {
     private tokensService: TokensService,
     private readonly mailerService: MailerService,
   ) {}
+
   // registration user
   async registration(dto: RegistrationDto) {
     const { name, email, password, phone } = dto;
@@ -59,7 +60,11 @@ export class AuthService {
       user: {
         name: user.name,
         email: user.email,
-        role: user.role,
+        role: {
+          id: 4,
+          value: 'client',
+          description: 'Клиент',
+        },
         isActivated: user.isActivated,
       },
     };

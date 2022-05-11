@@ -1,4 +1,4 @@
-import { Controller, Get, UseGuards } from '@nestjs/common';
+import { Controller, Get, Param, UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { UsersService } from './users.service';
 
@@ -10,5 +10,17 @@ export class UsersController {
   @Get()
   findAll() {
     return this.usersService.findAll();
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('admin-activate/:id')
+  administratorActivation(@Param('id') id: number) {
+    return this.usersService.administratorActivation(id);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('admin-deactivate/:id')
+  administratorDeactivation(@Param('id') id: number) {
+    return this.usersService.administratorDeactivation(id);
   }
 }

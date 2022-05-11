@@ -83,4 +83,26 @@ export class UsersService {
     const response = await this.userRepository.destroy({ where: { id } });
     return response;
   }
+
+  // administrator activation
+  async administratorActivation(id: number) {
+    const user = await this.userRepository.update(
+      { isActivated: true },
+      {
+        where: { id },
+      },
+    );
+    return user;
+  }
+
+  // administrator deactivation
+  async administratorDeactivation(id: number) {
+    const user = await this.userRepository.update(
+      { isActivated: false },
+      {
+        where: { id },
+      },
+    );
+    return user;
+  }
 }

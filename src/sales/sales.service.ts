@@ -36,14 +36,14 @@ export class SalesService {
     if (buildingId) {
       const sales = await this.salesRepository.findAll({
         where: { buildingId },
-        include: { model: Building },
+        include: { all: true },
         attributes: { exclude: ['createdAt', 'updatedAt'] },
         order: [['date', 'ASC']],
       });
       return sales;
     }
     const sales = await this.salesRepository.findAll({
-      include: { model: Building },
+      include: { all: true },
       attributes: { exclude: ['createdAt', 'updatedAt'] },
       order: [['date', 'ASC']],
     });
