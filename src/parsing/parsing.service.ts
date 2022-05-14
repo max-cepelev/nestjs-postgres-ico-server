@@ -372,33 +372,50 @@ export class ParsingService {
   }
 
   async test() {
-    const url = 'http://books.toscrape.com';
-    puppeteer
-      .use(StealthPlugin())
-      .launch({
-        headless: true,
-      })
-      .then(async (browser) => {
-        const page = await browser.newPage();
-
-        await page.goto(url, { waitUntil: 'load' });
-        await page.waitForSelector('.page_inner');
-
-        const urls = await page.$$eval('section ol > li', (links) => {
-          // Make sure the book to be scraped is in stock
-          links = links.filter(
-            (link) =>
-              link.querySelector('.instock.availability > i').textContent !==
-              'In stock',
+    const url =
+      'https://perm.domclick.ru/search?deal_type=sale&category=living&offer_type=complex&with_domclick_offers=1&sw=57.518364%2C54.006067&ne=58.30913%2C58.224817&from_developer=1&offset=0';
+    const browser = await puppeteer.use(StealthPlugin()).launch({
+      headless: false,
+    });
+    const page = await browser.newPage();
+    await page.goto(url, { waitUntil: 'load' });
+    await page.waitForSelector('[data-test="offers-list__item"]');
+    const lastPageNum = await page.evaluate(() => {
+      const page = document.querySelector('[data-test=pagination-last-page]');
+      return page ? +page.textContent : 1;
+    });
+    const allComplexes = [];
+    let pageNum = 1;
+    while (pageNum < lastPageNum + 1) {
+      const complexes = await page.evaluate(() => {
+        const complexes = [];
+        const elements = document.querySelectorAll(
+          '.complexSnippet_layout_link',
+        );
+        for (const element of elements) {
+          const link = element.querySelectorAll('a')[1].getAttribute('href');
+          const id = parseInt(link.slice(link.indexOf('__') + 2));
+          const title = element.querySelector('.complexSnippet_complexName');
+          const address = element.querySelector('.complexSnippet_address_cont');
+          const comissioningDate = element.querySelector(
+            '[data-test-id="plannedText"]',
           );
-          // Extract the links from the data
-          const urls = links.map((el) =>
-            el.querySelector('h3 > a').getAttribute('href'),
-          );
-          return urls;
-        });
-        console.log(urls);
+
+          complexes.push({
+            id,
+            title: title ? title.innerHTML : '',
+            address: address ? address.innerHTML : '',
+            comissioningDate: comissioningDate
+              ? comissioningDate.innerHTML
+              : 'не задано',
+          });
+        }
+        return complexes;
       });
+      allComplexes.push(complexes);
+      pageNum++;
+    }
+    browser.close();
     return { message: 'ok' };
   }
 }
