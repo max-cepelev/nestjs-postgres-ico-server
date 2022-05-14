@@ -32,6 +32,7 @@ export class ComplexesService {
   async findAll() {
     const complexes = await this.complexesRepository.findAll({
       order: [['name', 'ASC']],
+      include: { all: true },
     });
     return complexes;
   }
@@ -40,6 +41,7 @@ export class ComplexesService {
     const complexes = await this.complexesRepository.findAll({
       where: { groupId: groupId ? groupId : null },
       order: [['name', 'ASC']],
+      include: { all: true },
     });
     return complexes;
   }
