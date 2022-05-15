@@ -113,7 +113,7 @@ export class BuildingsService {
     const data = await this.buildingRepository.findOne({
       where: { id: buildingId },
       include: [{ model: Sale, order: ['date', 'ASC'] }, { model: Complex }],
-      order: [[Sale, 'date', 'ASC']],
+      // order: [[Sale, 'date', 'ASC']],
     });
 
     return data;
