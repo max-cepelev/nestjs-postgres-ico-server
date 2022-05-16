@@ -112,8 +112,8 @@ export class BuildingsService {
   async getDynamicsByBuilding(buildingId: number) {
     const data = await this.buildingRepository.findOne({
       where: { id: buildingId },
-      include: [{ model: Sale, order: ['date', 'ASC'] }, { model: Complex }],
-      // order: [[Sale, 'date', 'ASC']],
+      include: [Sale, Complex],
+      order: [[{ model: Sale, as: 'sales' }, 'date', 'ASC']],
     });
 
     return data;
@@ -122,8 +122,8 @@ export class BuildingsService {
   async getDynamicsByComplex(complexId: number) {
     const data = await this.buildingRepository.findAll({
       where: { complexId },
-      include: [{ model: Sale }, { model: Complex }],
-      // order: [[Sale, 'date', 'ASC']],
+      include: [Sale, Complex],
+      order: [[{ model: Sale, as: 'sales' }, 'date', 'ASC']],
     });
 
     return data;
