@@ -36,40 +36,44 @@ export class OffersService {
   async getBuildingsData(buildingIds: number[]) {
     const buildings = [];
     for (const buildingId of buildingIds) {
-      const offer = await this.offersRepository.findOne({
-        where: { buildingId },
-      });
-      const oneRoomOffers = await this.offersRepository.count({
-        where: { buildingId, rooms: { [Op.or]: [0, 1] } },
-      });
-      const twoRoomOffers = await this.offersRepository.count({
-        where: { buildingId, rooms: 2 },
-      });
-      const threeRoomOffers = await this.offersRepository.count({
-        where: { buildingId, rooms: 3 },
-      });
-      const fourRoomOffers = await this.offersRepository.count({
-        where: { buildingId, rooms: 4 },
-      });
-      const actualDate = await this.offersRepository.max('updatedAt', {
-        where: { buildingId },
-      });
-      buildings.push({
-        id: offer.buildingId,
-        complex: offer.complex,
-        building: offer.building,
-        developer: offer.developer,
-        address: offer.address,
-        floors: offer.floors,
-        image: offer.image,
-        oneRoomOffers,
-        twoRoomOffers,
-        threeRoomOffers,
-        fourRoomOffers,
-        actualDate,
-        totalOffers:
-          oneRoomOffers + twoRoomOffers + threeRoomOffers + fourRoomOffers,
-      });
+      if (buildingId) {
+        const offer = await this.offersRepository.findOne({
+          where: { buildingId },
+        });
+        if (offer) {
+          const oneRoomOffers = await this.offersRepository.count({
+            where: { buildingId, rooms: { [Op.or]: [0, 1] } },
+          });
+          const twoRoomOffers = await this.offersRepository.count({
+            where: { buildingId, rooms: 2 },
+          });
+          const threeRoomOffers = await this.offersRepository.count({
+            where: { buildingId, rooms: 3 },
+          });
+          const fourRoomOffers = await this.offersRepository.count({
+            where: { buildingId, rooms: 4 },
+          });
+          const actualDate = await this.offersRepository.max('updatedAt', {
+            where: { buildingId },
+          });
+          buildings.push({
+            id: buildingId,
+            complex: offer.complex,
+            building: offer.building,
+            developer: offer.developer,
+            address: offer.address,
+            floors: offer.floors,
+            image: offer.image,
+            oneRoomOffers,
+            twoRoomOffers,
+            threeRoomOffers,
+            fourRoomOffers,
+            actualDate,
+            totalOffers:
+              oneRoomOffers + twoRoomOffers + threeRoomOffers + fourRoomOffers,
+          });
+        }
+      }
     }
     return buildings;
   }
@@ -360,60 +364,61 @@ export class OffersService {
       }
       let res = { name };
       for (const buildingId of buildingIds) {
-        const resultCount = await this.offersRepository.count({
-          where: {
-            buildingId,
-            area,
-          },
-        });
-
-        let count1 = 0;
-        let count2 = 0;
-        let count3 = 0;
-        let count4 = 0;
-
-        if (resultCount > 0) {
-          count1 = await this.offersRepository.count({
-            where: { buildingId, area, rooms: { [Op.or]: [0, 1] } },
-          });
-          count2 = await this.offersRepository.count({
-            where: { buildingId, area, rooms: 2 },
-          });
-          count3 = await this.offersRepository.count({
-            where: { buildingId, area, rooms: 3 },
-          });
-          count4 = await this.offersRepository.count({
-            where: { buildingId, area, rooms: 4 },
-          });
-        }
-
-        const result =
-          resultCount > 0 &&
-          (await this.offersRepository.findAll({
+        if (buildingId) {
+          const resultCount = await this.offersRepository.count({
             where: {
               buildingId,
               area,
             },
-            attributes: [
-              [sequelize.fn('AVG', sequelize.col('price')), 'avgPrice'],
-              [sequelize.fn('MIN', sequelize.col('price')), 'minPrice'],
-              [sequelize.fn('MAX', sequelize.col('price')), 'maxPrice'],
-              [sequelize.fn('MIN', sequelize.col('floor')), 'minFloor'],
-              [sequelize.fn('MAX', sequelize.col('floor')), 'maxFloor'],
-              [sequelize.fn('MAX', sequelize.col('floors')), 'floors'],
-            ],
-          }));
-        res = {
-          ...res,
-          [buildingId]: {
-            data: resultCount > 0 ? result[0] : null,
-            count: resultCount,
-            count1,
-            count2,
-            count3,
-            count4,
-          },
-        };
+          });
+
+          let count1 = 0;
+          let count2 = 0;
+          let count3 = 0;
+          let count4 = 0;
+          if (resultCount && resultCount > 0) {
+            count1 = await this.offersRepository.count({
+              where: { buildingId, area, rooms: { [Op.or]: [0, 1] } },
+            });
+            count2 = await this.offersRepository.count({
+              where: { buildingId, area, rooms: 2 },
+            });
+            count3 = await this.offersRepository.count({
+              where: { buildingId, area, rooms: 3 },
+            });
+            count4 = await this.offersRepository.count({
+              where: { buildingId, area, rooms: 4 },
+            });
+          }
+          const result =
+            resultCount &&
+            resultCount > 0 &&
+            (await this.offersRepository.findAll({
+              where: {
+                buildingId,
+                area,
+              },
+              attributes: [
+                [sequelize.fn('AVG', sequelize.col('price')), 'avgPrice'],
+                [sequelize.fn('MIN', sequelize.col('price')), 'minPrice'],
+                [sequelize.fn('MAX', sequelize.col('price')), 'maxPrice'],
+                [sequelize.fn('MIN', sequelize.col('floor')), 'minFloor'],
+                [sequelize.fn('MAX', sequelize.col('floor')), 'maxFloor'],
+                [sequelize.fn('MAX', sequelize.col('floors')), 'floors'],
+              ],
+            }));
+          res = {
+            ...res,
+            [buildingId]: {
+              data: resultCount > 0 ? result[0] : null,
+              count: resultCount,
+              count1,
+              count2,
+              count3,
+              count4,
+            },
+          };
+        }
       }
       analysisData.push(res);
     }
