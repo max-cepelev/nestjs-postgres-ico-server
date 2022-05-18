@@ -10,11 +10,29 @@ export class Offer extends Model<Offer, CreateOfferDto> {
   })
   id: number;
 
+  @Column({ type: DataType.INTEGER })
+  floor: number;
+
+  @Column({ type: DataType.INTEGER })
+  floors: number;
+
+  @Column({ type: DataType.FLOAT })
+  price: number;
+
   @Column({ type: DataType.STRING })
-  image: string;
+  address: string;
+
+  @Column({ type: DataType.INTEGER })
+  buildingId: number;
+
+  @Column({ type: DataType.STRING })
+  building: string;
 
   @Column({ type: DataType.STRING })
   developer: string;
+
+  @Column({ type: DataType.INTEGER })
+  developerId: number;
 
   @Column({ type: DataType.STRING })
   complex: string;
@@ -22,33 +40,12 @@ export class Offer extends Model<Offer, CreateOfferDto> {
   @Column({ type: DataType.INTEGER })
   complexId: number;
 
-  @Column({ type: DataType.STRING })
-  building: string;
-
-  @Column({ type: DataType.INTEGER })
-  buildingId: number;
-
-  @Column({ type: DataType.STRING })
-  address: string;
-
-  @Column({ type: DataType.STRING })
-  commissioningDate: string;
-
   @Column({ type: DataType.FLOAT })
-  price: number;
-
-  @Column({ type: DataType.FLOAT })
-  totalArea: number;
+  area: number;
 
   @Column({ type: DataType.INTEGER })
-  floor: number;
-
-  @Column({ type: DataType.INTEGER })
-  floorsAmount: number;
-
-  @Column({ type: DataType.INTEGER })
-  roomsAmount: number;
+  rooms: number;
 
   @Column({ type: DataType.STRING })
-  complexUrl: string;
+  image: string;
 }

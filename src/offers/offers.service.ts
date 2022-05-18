@@ -14,9 +14,9 @@ const attributes: FindAttributeOptions = [
   [sequelize.fn('AVG', sequelize.col('price')), 'avgPrice'],
   [sequelize.fn('MIN', sequelize.col('price')), 'minPrice'],
   [sequelize.fn('MAX', sequelize.col('price')), 'maxPrice'],
-  [sequelize.fn('AVG', sequelize.col('totalArea')), 'avgArea'],
-  [sequelize.fn('MIN', sequelize.col('totalArea')), 'minArea'],
-  [sequelize.fn('MAX', sequelize.col('totalArea')), 'maxArea'],
+  [sequelize.fn('AVG', sequelize.col('area')), 'avgArea'],
+  [sequelize.fn('MIN', sequelize.col('area')), 'minArea'],
+  [sequelize.fn('MAX', sequelize.col('area')), 'maxArea'],
   [sequelize.fn('MIN', sequelize.col('floor')), 'minFloor'],
   [sequelize.fn('MAX', sequelize.col('floor')), 'maxFloor'],
 ];
@@ -30,7 +30,7 @@ const allParams = getNumArray(25, 110, 5);
 @Injectable()
 export class OffersService {
   constructor(
-    @InjectModel(Offer) private offersRepository: typeof Offer, // @InjectBrowser() private readonly browser: Browser,
+    @InjectModel(Offer) private offersRepository: typeof Offer, // @InjectBrowser() private  browser: Browser,
   ) {}
 
   async getBuildingsData(buildingIds: number[]) {
@@ -40,16 +40,16 @@ export class OffersService {
         where: { buildingId },
       });
       const oneRoomOffers = await this.offersRepository.count({
-        where: { buildingId, roomsAmount: { [Op.or]: [0, 1] } },
+        where: { buildingId, rooms: { [Op.or]: [0, 1] } },
       });
       const twoRoomOffers = await this.offersRepository.count({
-        where: { buildingId, roomsAmount: 2 },
+        where: { buildingId, rooms: 2 },
       });
       const threeRoomOffers = await this.offersRepository.count({
-        where: { buildingId, roomsAmount: 3 },
+        where: { buildingId, rooms: 3 },
       });
       const fourRoomOffers = await this.offersRepository.count({
-        where: { buildingId, roomsAmount: 4 },
+        where: { buildingId, rooms: 4 },
       });
       const actualDate = await this.offersRepository.max('updatedAt', {
         where: { buildingId },
@@ -58,9 +58,9 @@ export class OffersService {
         id: offer.buildingId,
         complex: offer.complex,
         building: offer.building,
+        developer: offer.developer,
         address: offer.address,
-        floorsAmount: offer.floorsAmount,
-        commissioningDate: offer.commissioningDate,
+        floors: offer.floors,
         image: offer.image,
         oneRoomOffers,
         twoRoomOffers,
@@ -76,7 +76,7 @@ export class OffersService {
 
   async getData(
     arr: number[],
-    roomsAmount: sequelize.WhereAttributeHashValue<number>,
+    rooms: sequelize.WhereAttributeHashValue<number>,
     id: number,
     column: keyof Offer,
   ) {
@@ -84,15 +84,15 @@ export class OffersService {
     for (const param of arr) {
       if (param === arr[0]) {
         const resultCount = await this.offersRepository.count({
-          where: { [column]: id, roomsAmount, totalArea: { [Op.lt]: arr[1] } },
+          where: { [column]: id, rooms, area: { [Op.lt]: arr[1] } },
         });
         const result =
           resultCount > 0 &&
           (await this.offersRepository.findAll({
             where: {
               [column]: id,
-              roomsAmount,
-              totalArea: { [Op.lte]: arr[1] },
+              rooms,
+              area: { [Op.lte]: arr[1] },
             },
             attributes,
           }));
@@ -105,8 +105,8 @@ export class OffersService {
         const resultCount = await this.offersRepository.count({
           where: {
             [column]: id,
-            roomsAmount,
-            totalArea: { [Op.gt]: arr[arr.length - 1] },
+            rooms,
+            area: { [Op.gt]: arr[arr.length - 1] },
           },
         });
         const result =
@@ -114,8 +114,8 @@ export class OffersService {
           (await this.offersRepository.findAll({
             where: {
               [column]: id,
-              roomsAmount,
-              totalArea: { [Op.gt]: arr[arr.length - 1] },
+              rooms,
+              area: { [Op.gt]: arr[arr.length - 1] },
             },
             attributes,
           }));
@@ -128,8 +128,8 @@ export class OffersService {
         const resultCount = await this.offersRepository.count({
           where: {
             [column]: id,
-            roomsAmount,
-            totalArea: { [Op.between]: [param, param + 5] },
+            rooms,
+            area: { [Op.between]: [param, param + 5] },
           },
         });
         const result =
@@ -137,8 +137,8 @@ export class OffersService {
           (await this.offersRepository.findAll({
             where: {
               [column]: id,
-              roomsAmount,
-              totalArea: { [Op.between]: [param, param + 5] },
+              rooms,
+              area: { [Op.between]: [param, param + 5] },
             },
             attributes,
           }));
@@ -161,16 +161,16 @@ export class OffersService {
         where: { buildingId },
       });
       const oneRoomOffers = await this.offersRepository.count({
-        where: { buildingId, roomsAmount: { [Op.or]: [0, 1] } },
+        where: { buildingId, rooms: { [Op.or]: [0, 1] } },
       });
       const twoRoomOffers = await this.offersRepository.count({
-        where: { buildingId, roomsAmount: 2 },
+        where: { buildingId, rooms: 2 },
       });
       const threeRoomOffers = await this.offersRepository.count({
-        where: { buildingId, roomsAmount: 3 },
+        where: { buildingId, rooms: 3 },
       });
       const fourRoomOffers = await this.offersRepository.count({
-        where: { buildingId, roomsAmount: 4 },
+        where: { buildingId, rooms: 4 },
       });
       const actualDate = await this.offersRepository.max('updatedAt', {
         where: { buildingId },
@@ -185,8 +185,7 @@ export class OffersService {
         complex: offer.complex,
         building: offer.building,
         address: offer.address,
-        floorsAmount: offer.floorsAmount,
-        commissioningDate: offer.commissioningDate,
+        floors: offer.floors,
         image: offer.image,
         oneRoomOffers,
         twoRoomOffers,
@@ -210,16 +209,16 @@ export class OffersService {
         where: { buildingId },
       });
       const oneRoomOffers = await this.offersRepository.count({
-        where: { buildingId, roomsAmount: { [Op.or]: [0, 1] } },
+        where: { buildingId, rooms: { [Op.or]: [0, 1] } },
       });
       const twoRoomOffers = await this.offersRepository.count({
-        where: { buildingId, roomsAmount: 2 },
+        where: { buildingId, rooms: 2 },
       });
       const threeRoomOffers = await this.offersRepository.count({
-        where: { buildingId, roomsAmount: 3 },
+        where: { buildingId, rooms: 3 },
       });
       const fourRoomOffers = await this.offersRepository.count({
-        where: { buildingId, roomsAmount: 4 },
+        where: { buildingId, rooms: 4 },
       });
       const actualDate = await this.offersRepository.max('updatedAt', {
         where: { buildingId },
@@ -252,8 +251,7 @@ export class OffersService {
         complex: offer.complex,
         building: offer.building,
         address: offer.address,
-        floorsAmount: offer.floorsAmount,
-        commissioningDate: offer.commissioningDate,
+        floors: offer.floors,
         image: offer.image,
         oneRoomOffers,
         twoRoomOffers,
@@ -282,16 +280,16 @@ export class OffersService {
         where: { complexId },
       });
       const oneRoomOffers = await this.offersRepository.count({
-        where: { complexId, roomsAmount: { [Op.or]: [0, 1] } },
+        where: { complexId, rooms: { [Op.or]: [0, 1] } },
       });
       const twoRoomOffers = await this.offersRepository.count({
-        where: { complexId, roomsAmount: 2 },
+        where: { complexId, rooms: 2 },
       });
       const threeRoomOffers = await this.offersRepository.count({
-        where: { complexId, roomsAmount: 3 },
+        where: { complexId, rooms: 3 },
       });
       const fourRoomOffers = await this.offersRepository.count({
-        where: { complexId, roomsAmount: 4 },
+        where: { complexId, rooms: 4 },
       });
       const actualDate = await this.offersRepository.max('updatedAt', {
         where: { complexId },
@@ -324,8 +322,7 @@ export class OffersService {
         complex: offer.complex,
         building: offer.building,
         address: offer.address,
-        floorsAmount: offer.floorsAmount,
-        commissioningDate: offer.commissioningDate,
+        floors: offer.floors,
         image: offer.image,
         oneRoomOffers,
         twoRoomOffers,
@@ -350,23 +347,23 @@ export class OffersService {
 
     for (const param of allParams) {
       let name: string;
-      let totalArea: WhereAttributeHashValue<number>;
+      let area: WhereAttributeHashValue<number>;
       if (param === allParams[0]) {
         name = `0 - ${param}`;
-        totalArea = { [Op.lt]: allParams[1] };
+        area = { [Op.lt]: allParams[1] };
       } else if (param === allParams[allParams.length - 1]) {
         name = `${param}+`;
-        totalArea = { [Op.gt]: allParams[allParams.length - 1] };
+        area = { [Op.gt]: allParams[allParams.length - 1] };
       } else {
         name = `${param} - ${param + 5}`;
-        totalArea = { [Op.between]: [param, param + 5] };
+        area = { [Op.between]: [param, param + 5] };
       }
       let res = { name };
       for (const buildingId of buildingIds) {
         const resultCount = await this.offersRepository.count({
           where: {
             buildingId,
-            totalArea,
+            area,
           },
         });
 
@@ -377,16 +374,16 @@ export class OffersService {
 
         if (resultCount > 0) {
           count1 = await this.offersRepository.count({
-            where: { buildingId, totalArea, roomsAmount: { [Op.or]: [0, 1] } },
+            where: { buildingId, area, rooms: { [Op.or]: [0, 1] } },
           });
           count2 = await this.offersRepository.count({
-            where: { buildingId, totalArea, roomsAmount: 2 },
+            where: { buildingId, area, rooms: 2 },
           });
           count3 = await this.offersRepository.count({
-            where: { buildingId, totalArea, roomsAmount: 3 },
+            where: { buildingId, area, rooms: 3 },
           });
           count4 = await this.offersRepository.count({
-            where: { buildingId, totalArea, roomsAmount: 4 },
+            where: { buildingId, area, rooms: 4 },
           });
         }
 
@@ -395,7 +392,7 @@ export class OffersService {
           (await this.offersRepository.findAll({
             where: {
               buildingId,
-              totalArea,
+              area,
             },
             attributes: [
               [sequelize.fn('AVG', sequelize.col('price')), 'avgPrice'],
@@ -403,6 +400,7 @@ export class OffersService {
               [sequelize.fn('MAX', sequelize.col('price')), 'maxPrice'],
               [sequelize.fn('MIN', sequelize.col('floor')), 'minFloor'],
               [sequelize.fn('MAX', sequelize.col('floor')), 'maxFloor'],
+              [sequelize.fn('MAX', sequelize.col('floors')), 'floors'],
             ],
           }));
         res = {
@@ -428,20 +426,19 @@ export class OffersService {
   async bulkCreate(dto: CreateOfferDto[]) {
     const offers = await this.offersRepository.bulkCreate(dto, {
       updateOnDuplicate: [
-        'image',
+        'floor',
+        'floors',
+        'price',
+        'address',
+        'buildingId',
+        'building',
         'developer',
+        'developerId',
         'complex',
         'complexId',
-        'building',
-        'buildingId',
-        'address',
-        'commissioningDate',
-        'price',
-        'totalArea',
-        'floor',
-        'floorsAmount',
-        'roomsAmount',
-        'complexUrl',
+        'area',
+        'rooms',
+        'image',
       ],
     });
     return offers;

@@ -6,7 +6,7 @@ export class ParsingController {
   constructor(private readonly parsingService: ParsingService) {}
 
   @Get()
-  startParsing() {
-    return this.parsingService.test();
+  async getDomClick() {
+    return await this.parsingService.startScrapping();
   }
 }

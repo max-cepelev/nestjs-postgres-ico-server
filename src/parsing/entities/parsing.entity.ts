@@ -1,15 +1,51 @@
-export interface IDeveloper {
-  [key: string]: {
-    id: number;
-    name: string;
-    logo: string;
-    holding_id: number;
-    site: string;
+export interface IParsingData {
+  house: {
+    floors: number;
   };
-}
-
-export interface IComplexData {
-  [key: string]: {
+  source: string;
+  offers_count: number;
+  layout_id: string;
+  address: {
+    id: number;
+    kind: string;
+    guid: string;
+    name: string;
+    display_name: string;
+    position: {
+      lat: number;
+      lon: number;
+    };
+    locality: {
+      kind: string;
+      guid: string;
+      name: string;
+      display_name: string;
+    };
+    subways: [];
+    info: {
+      timezone: string;
+      timezone_offset: number;
+    };
+    short_display_name: string;
+  };
+  chat_available: boolean;
+  id: number;
+  trade_in: string;
+  offer_type: string;
+  status: number;
+  deal_type: string;
+  price_info: {
+    price: number;
+    square_price: number;
+    mortgage_price: number;
+    square_price_for_year: number;
+    min_price: number;
+    max_price: number;
+  };
+  backwash: boolean;
+  published_dt: string;
+  slug: string;
+  complex: {
     id: number;
     name: string;
     min_rate: number;
@@ -27,12 +63,12 @@ export interface IComplexData {
     has_approve_flats: boolean;
     phone_substitution: string;
     telephony_data: {
-      r_number: string;
-      b_number: string;
-      campaign_id: number;
       redirect_type: string;
-      has_problem: boolean;
       complex_id: number;
+      campaign_id: number;
+      has_problem: boolean;
+      b_number: string;
+      r_number: string;
     };
     slug: string;
     building: {
@@ -42,27 +78,21 @@ export interface IComplexData {
       end_build_quarter: number;
       released: boolean;
     };
-    developer_name: string;
   };
-}
-
-export interface IComplexesData {
-  developers: IDeveloper;
-  complexes: IComplexData;
-}
-
-export interface IMainData {
-  id: number;
-  image: string;
-  developer: string;
-  complex: string;
-  complex_id: number;
-  address: string;
-  commissioningDate: string;
-  price: number;
-  totalArea: number;
-  floor: number;
-  floorsAmount: number;
-  roomsAmount: number;
-  complex_url: string;
+  discount_status: {};
+  photos: {
+    url: string;
+  }[];
+  developer: {
+    id: number;
+    name: string;
+    logo: string;
+    holding_id: number;
+  };
+  object_info: {
+    max_floor: number;
+    area: number;
+    rooms: number;
+    min_floor: number;
+  };
 }

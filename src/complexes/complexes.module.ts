@@ -8,5 +8,6 @@ import { Complex } from './entities/complex.entity';
   providers: [ComplexesService],
   controllers: [ComplexesController],
   imports: [SequelizeModule.forFeature([Complex])],
+  exports: [ComplexesService],
 })
 export class ComplexesModule {}
