@@ -415,8 +415,8 @@ export class OffersService {
               count3,
               count4,
             },
-          analysisData.push(res);
           };
+          analysisData.push(res);
         }
       }
     }
