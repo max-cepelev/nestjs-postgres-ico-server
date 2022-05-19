@@ -376,7 +376,7 @@ export class OffersService {
           let count2 = 0;
           let count3 = 0;
           let count4 = 0;
-          if (resultCount && resultCount > 0) {
+          if (resultCount > 0) {
             count1 = await this.offersRepository.count({
               where: { buildingId, area, rooms: { [Op.or]: [0, 1] } },
             });
@@ -390,9 +390,7 @@ export class OffersService {
               where: { buildingId, area, rooms: 4 },
             });
           }
-          const result =
-            resultCount &&
-            resultCount > 0 &&
+          const result = resultCount > 0 &&
             (await this.offersRepository.findAll({
               where: {
                 buildingId,
@@ -417,10 +415,10 @@ export class OffersService {
               count3,
               count4,
             },
+          analysisData.push(res);
           };
         }
       }
-      analysisData.push(res);
     }
 
     const buildings = await this.getBuildingsData(buildingIds);
