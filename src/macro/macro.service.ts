@@ -1,3 +1,4 @@
+
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { HttpService } from 'nestjs-http-promise';
 import { getMacroDataV1, getMacroDataV2 } from 'src/helpers/transformMacroData';
@@ -101,6 +102,7 @@ export class MacroService {
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
+  }
     
     async getVseSvoi() {
     try {
