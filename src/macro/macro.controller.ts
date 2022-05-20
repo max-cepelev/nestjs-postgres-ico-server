@@ -26,12 +26,12 @@ export class MacroController {
   }
   
   @Get('family')
-  getfamily() {
+  getFamily() {
     return this.macroService.getFamily();
   }
   
   @Get('vse-svoi')
-  getfamily() {
+  getVseSvoi() {
     return this.macroService.getVseSvoi();
   }
 }
