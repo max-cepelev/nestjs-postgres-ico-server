@@ -24,8 +24,14 @@ export class MacroController {
   getPut() {
     return this.macroService.getPut();
   }
+  
   @Get('family')
   getfamily() {
     return this.macroService.getFamily();
+  }
+  
+  @Get('vse-svoi')
+  getfamily() {
+    return this.macroService.getVseSvoi();
   }
 }
