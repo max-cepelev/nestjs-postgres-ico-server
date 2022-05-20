@@ -101,5 +101,23 @@ export class MacroService {
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
+    
+    async getVseSvoi() {
+    try {
+      const params = {
+        feed_id: 1664,
+      };
+      const response = await this.httpService.get(
+        `https://api.macroserver.ru/estate/export/web/zdVc0JVaSr1gKxpbtG7AmVbxgLZHBr5Pg_6MhzrnhK0LHDW2uiK3qruU7cxOFuJ6b46vT-P-RWhbzaAbxAvztbgL8dAaYSLpUK44At3rIB5tvLYr9KKPWUmdCjoOh2SmuYw_cpp8MTY1MzAzMzcxM3wzMzdjNg/507-web.json`,
+        { params, timeout: 3000 },
+      );
+      return getMacroDataV2(response.data.records);
+    } catch (error) {
+      console.log(error);
+      throw new HttpException(
+        'Произошла ошибка при получении данных',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 }
