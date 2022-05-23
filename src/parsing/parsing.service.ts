@@ -18,7 +18,7 @@ export class ParsingService {
   async getDomclickData(complexId: number) {
     const url = `https://complex-api.domclick.ru/v4/layouts/?complex_id=${complexId}&limit=1000`;
     const browser = await puppeteer.use(StealthPlugin()).launch({
-      headless: false,
+      headless: true,
     });
     const page = await browser.newPage();
     await page.waitForTimeout(1000);
@@ -58,6 +58,7 @@ export class ParsingService {
   }
 
   async startScrapping() {
+    await this.offersService.removeAll();
     const complexes = await this.complexesService.findAll();
     for (const complex of complexes) {
       if (complex.domClickId) {
@@ -65,7 +66,7 @@ export class ParsingService {
         await this.offersService.bulkCreate(data);
       }
     }
-    return { message: 'Процесс запущен' };
+    return { message: 'Процесс завершен' };
   }
 
   // async scrapComplexes() {
