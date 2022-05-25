@@ -11,8 +11,11 @@ export class CitiesService {
     return await this.citiesRepository.create(dto);
   }
 
-  async findAll() {
-    return await this.citiesRepository.findAll();
+  async findAll(regionId?: number) {
+    return await this.citiesRepository.findAll({
+      where: regionId ? { regionId } : undefined,
+      include: { all: true },
+    });
   }
 
   async findOne(id: number) {
