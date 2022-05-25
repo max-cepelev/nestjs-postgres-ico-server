@@ -26,15 +26,10 @@ export class BuildingsService {
         'propertyClass',
         'wallMaterial',
         'decorType',
-        'floorsAmount',
-        'apartmentsAmount',
-        'livingSpace',
-        'wallHeight',
-        'entrancesAmount',
-        'passengerElevatorsAmount',
-        'freightElevatorsAmount',
-        'nonLivingRoomsAmount',
-        'parkingLotsAmount',
+        'floors',
+        'entrances',
+        'passengerElevators',
+        'freightElevators',
         'latitude',
         'longitude',
         'img',
@@ -42,6 +37,7 @@ export class BuildingsService {
         'domClickId',
         'complexId',
         'developerId',
+        'cityId',
       ],
     });
 
@@ -65,7 +61,6 @@ export class BuildingsService {
   }
 
   async findAll(complexId?: number, page?: number) {
-    console.log(page);
     const options: FindOptions<Building> = {
       include: [Complex, Developer],
       attributes: { exclude: ['createdAt', 'updatedAt'] },

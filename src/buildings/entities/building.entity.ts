@@ -7,8 +7,10 @@ import {
   Model,
   Table,
 } from 'sequelize-typescript';
+import { City } from 'src/cities/entities/city.entity';
 import { Complex } from 'src/complexes/entities/complex.entity';
 import { Developer } from 'src/developers/entities/developer.entity';
+import { Property } from 'src/properties/entities/property.entity';
 import { Sale } from '../../sales/entities/sale.entity';
 
 interface BuildingCreationAttrs {
@@ -19,15 +21,10 @@ interface BuildingCreationAttrs {
   propertyClass: string | null;
   wallMaterial: string | null;
   decorType: string | null;
-  floorsAmount: number | null;
-  apartmentsAmount: number | null;
-  livingSpace: number | null;
-  wallHeight: string | null;
-  entrancesAmount: number | null;
-  passengerElevatorsAmount: number | null;
-  freightElevatorsAmount: number | null;
-  nonLivingRoomsAmount: number | null;
-  parkingLotsAmount: number | null;
+  floors: number | null;
+  entrances: number | null;
+  passengerElevators: number | null;
+  freightElevators: number | null;
   latitude: number | null;
   longitude: number | null;
   img: string | null;
@@ -68,31 +65,16 @@ export class Building extends Model<Building, BuildingCreationAttrs> {
   decorType: string;
 
   @Column({ type: DataType.INTEGER })
-  floorsAmount: number;
+  floors: number;
 
   @Column({ type: DataType.INTEGER })
-  apartmentsAmount: number;
-
-  @Column({ type: DataType.FLOAT })
-  livingSpace: number;
-
-  @Column({ type: DataType.STRING })
-  wallHeight: string;
+  entrances: number;
 
   @Column({ type: DataType.INTEGER })
-  entrancesAmount: number;
+  passengerElevators: number;
 
   @Column({ type: DataType.INTEGER })
-  passengerElevatorsAmount: number;
-
-  @Column({ type: DataType.INTEGER })
-  freightElevatorsAmount: number;
-
-  @Column({ type: DataType.INTEGER })
-  nonLivingRoomsAmount: number;
-
-  @Column({ type: DataType.INTEGER })
-  parkingLotsAmount: number;
+  freightElevators: number;
 
   @Column({ type: DataType.FLOAT })
   latitude: number;
@@ -110,19 +92,29 @@ export class Building extends Model<Building, BuildingCreationAttrs> {
   domClickId: number;
 
   @ForeignKey(() => Complex)
-  @Column({ type: DataType.INTEGER })
+  @Column({ type: DataType.INTEGER, allowNull: false })
   complexId: number;
+
+  @ForeignKey(() => Developer)
+  @Column({ type: DataType.INTEGER, allowNull: false })
+  developerId: number;
+
+  @ForeignKey(() => City)
+  @Column({ type: DataType.INTEGER, allowNull: false })
+  cityId: number;
 
   @BelongsTo(() => Complex)
   complex: Complex;
 
-  @ForeignKey(() => Developer)
-  @Column({ type: DataType.INTEGER })
-  developerId: number;
-
   @BelongsTo(() => Developer)
   developer: Developer;
 
+  @BelongsTo(() => City)
+  city: City;
+
   @HasMany(() => Sale)
   sales: Sale[];
+
+  @HasMany(() => Property)
+  properties: Property[];
 }

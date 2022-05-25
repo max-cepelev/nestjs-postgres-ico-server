@@ -40,7 +40,7 @@ export class BuildingsController {
     return this.buildingsService.uploadImage(id, img);
   }
 
-  // @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   @Get()
   findAll(
     @Query('complexId') complexId?: number,

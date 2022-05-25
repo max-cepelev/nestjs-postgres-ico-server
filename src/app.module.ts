@@ -27,6 +27,14 @@ import { OffersModule } from './offers/offers.module';
 import { Offer } from './offers/entities/offers.entity';
 import { ConfigModule } from '@nestjs/config';
 import { ServeStaticModule } from '@nestjs/serve-static';
+import { CitiesModule } from './cities/cities.module';
+import { RegionsModule } from './regions/regions.module';
+import { PropertiesModule } from './properties/properties.module';
+import { PropertyTypesModule } from './property-types/property-types.module';
+import { City } from './cities/entities/city.entity';
+import { Region } from './regions/entities/region.entity';
+import { Property } from './properties/entities/property.entity';
+import { PropertyType } from './property-types/entities/property-type.entity';
 
 @Module({
   imports: [
@@ -76,6 +84,10 @@ import { ServeStaticModule } from '@nestjs/serve-static';
         Sale,
         Token,
         Offer,
+        City,
+        Region,
+        Property,
+        PropertyType,
       ],
       autoLoadModels: true,
     }),
@@ -91,6 +103,10 @@ import { ServeStaticModule } from '@nestjs/serve-static';
     AuthModule,
     MacroModule,
     OffersModule,
+    CitiesModule,
+    RegionsModule,
+    PropertiesModule,
+    PropertyTypesModule,
   ],
   controllers: [],
   providers: [],
