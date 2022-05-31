@@ -32,14 +32,8 @@ export class DevelopersController {
 
   @UseGuards(JwtAuthGuard)
   @Get()
-  findAll() {
-    return this.developersService.findAll();
-  }
-
-  @UseGuards(JwtAuthGuard)
-  @Get('group')
-  findAllByGroup(@Query('groupId') groupId: number | null) {
-    return this.developersService.findAllByGroup(groupId);
+  findAll(@Query('groupId') groupId?: number) {
+    return this.developersService.findAll(groupId);
   }
 
   @UseGuards(JwtAuthGuard)

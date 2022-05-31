@@ -137,14 +137,15 @@ export class AuthService {
   async refresh(refreshToken: string) {
     if (!refreshToken) {
       throw new HttpException(
-        `Пользователь не авторизован`,
+        `Пользователь не авторизован, токен не найден`,
         HttpStatus.UNAUTHORIZED,
       );
     }
 
-    const userData = this.tokensService.validateRefreshTokenToken(refreshToken);
-    const tokenFromDb = await this.tokensService.findToken(refreshToken);
-    if (!userData || !tokenFromDb) {
+    const userData = await this.tokensService.validateRefreshToken(
+      refreshToken,
+    );
+    if (!userData) {
       throw new HttpException(
         `Пользователь не авторизован`,
         HttpStatus.UNAUTHORIZED,

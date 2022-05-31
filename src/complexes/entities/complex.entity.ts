@@ -7,6 +7,8 @@ import {
   Model,
   Table,
 } from 'sequelize-typescript';
+import { Area } from 'src/areas/entities/area.entity';
+import { City } from 'src/cities/entities/city.entity';
 import { Group } from 'src/groups/entities/group.entity';
 import { Building } from '../../buildings/entities/building.entity';
 import { CreateComplexDto } from '../dto/create-complex-dto';
@@ -44,6 +46,20 @@ export class Complex extends Model<Complex, CreateComplexDto> {
 
   @BelongsTo(() => Group)
   group: Group;
+
+  @ForeignKey(() => City)
+  @Column({ type: DataType.INTEGER, allowNull: false })
+  cityId: number;
+
+  @BelongsTo(() => City)
+  city: City;
+
+  @ForeignKey(() => Area)
+  @Column({ type: DataType.INTEGER, allowNull: false })
+  areaId: number;
+
+  @BelongsTo(() => Area)
+  area: Area;
 
   @HasMany(() => Building)
   buildings: Building[];

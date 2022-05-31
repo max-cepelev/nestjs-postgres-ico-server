@@ -73,7 +73,7 @@ export class TokensService {
     }
   }
 
-  validateRefreshTokenToken(refreshToken: string) {
+  validateRefreshToken(refreshToken: string) {
     try {
       const userData = this.jwtService.verify(refreshToken, {
         secret: process.env.REFRESH_SECRET,

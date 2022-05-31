@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
+import { FindOptions, WhereOptions } from 'sequelize';
+import { PropertyType } from 'src/property-types/entities/property-type.entity';
 import { CreatePropertyDto } from './dto/create-property.dto';
 import { UpdatePropertyDto } from './dto/update-property.dto';
 import { Property } from './entities/property.entity';
@@ -13,15 +15,27 @@ export class PropertiesService {
     return await this.propertiesRepository.create(dto);
   }
 
+  async createBulk(dto: CreatePropertyDto[]) {
+    return await this.propertiesRepository.bulkCreate(dto);
+  }
+
   async findAll(buildingId?: number, propertyTypeId?: number) {
-    return await this.propertiesRepository.findAll({
-      where: {
-        buildingId: buildingId ?? undefined,
-        propertyTypeId: propertyTypeId ?? undefined,
-      },
-      include: { all: true },
+    let where: WhereOptions<Property> = undefined;
+    if (buildingId && propertyTypeId) {
+      where = { buildingId, propertyTypeId };
+    } else if (buildingId) {
+      where = { buildingId };
+    } else if (propertyTypeId) {
+      where = { propertyTypeId };
+    }
+
+    const options: FindOptions<Property> = {
+      include: { model: PropertyType },
       attributes: { exclude: ['createdAt', 'updatedAt'] },
-    });
+      where,
+    };
+
+    return await this.propertiesRepository.findAll(options);
   }
 
   async findOne(id: number) {

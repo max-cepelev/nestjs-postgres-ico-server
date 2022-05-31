@@ -22,6 +22,7 @@ export class GroupsService {
 
   async findAll() {
     const complexes = await this.groupsRepository.findAll({
+      include: { all: true },
       order: [['name', 'ASC']],
     });
     return complexes;

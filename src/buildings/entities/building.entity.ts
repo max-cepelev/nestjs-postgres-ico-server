@@ -7,35 +7,16 @@ import {
   Model,
   Table,
 } from 'sequelize-typescript';
+import { Area } from 'src/areas/entities/area.entity';
 import { City } from 'src/cities/entities/city.entity';
 import { Complex } from 'src/complexes/entities/complex.entity';
 import { Developer } from 'src/developers/entities/developer.entity';
 import { Property } from 'src/properties/entities/property.entity';
 import { Sale } from '../../sales/entities/sale.entity';
-
-interface BuildingCreationAttrs {
-  name: string;
-  address: string;
-  commissioningDate: Date | null;
-  commissioned: boolean;
-  propertyClass: string | null;
-  wallMaterial: string | null;
-  decorType: string | null;
-  floors: number | null;
-  entrances: number | null;
-  passengerElevators: number | null;
-  freightElevators: number | null;
-  latitude: number | null;
-  longitude: number | null;
-  img: string | null;
-  domRfId: number | null;
-  domClickId: number | null;
-  complexId: number;
-  developerId: number;
-}
+import { CreateBuildingDto } from '../dto/create-building-dto';
 
 @Table({ tableName: 'buildings' })
-export class Building extends Model<Building, BuildingCreationAttrs> {
+export class Building extends Model<Building, CreateBuildingDto> {
   @Column({
     type: DataType.INTEGER,
     primaryKey: true,
@@ -103,6 +84,10 @@ export class Building extends Model<Building, BuildingCreationAttrs> {
   @Column({ type: DataType.INTEGER, allowNull: false })
   cityId: number;
 
+  @ForeignKey(() => Area)
+  @Column({ type: DataType.INTEGER, allowNull: false })
+  areaId: number;
+
   @BelongsTo(() => Complex)
   complex: Complex;
 
@@ -111,6 +96,9 @@ export class Building extends Model<Building, BuildingCreationAttrs> {
 
   @BelongsTo(() => City)
   city: City;
+
+  @BelongsTo(() => Area)
+  area: Area;
 
   @HasMany(() => Sale)
   sales: Sale[];

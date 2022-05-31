@@ -31,9 +31,9 @@ export class OffersController {
   @Post('analysis')
   getAnalysisData(
     @Body()
-    { buildingIds }: { buildingIds: number[] },
+    buildings: { id: number; name: string }[],
   ) {
-    return this.offersService.getAnalysisData(buildingIds);
+    return this.offersService.getAnalysisData(buildings);
   }
 
   @UseGuards(JwtAuthGuard)

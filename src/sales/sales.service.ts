@@ -12,6 +12,7 @@ export class SalesService {
   async bulkCreate(dto: CreateSaleDto[]) {
     const data = await this.salesRepository.bulkCreate(dto, {
       updateOnDuplicate: [
+        'date',
         'numberLiving',
         'areaLiving',
         'priceLiving',
@@ -21,6 +22,7 @@ export class SalesService {
         'numberParkingSpace',
         'areaParkingSpace',
         'priceParkingSpace',
+        'buildingId',
       ],
     });
 
@@ -33,16 +35,8 @@ export class SalesService {
   }
 
   async findAll(buildingId?: number) {
-    if (buildingId) {
-      const sales = await this.salesRepository.findAll({
-        where: { buildingId },
-        include: { all: true },
-        attributes: { exclude: ['createdAt', 'updatedAt'] },
-        order: [['date', 'ASC']],
-      });
-      return sales;
-    }
     const sales = await this.salesRepository.findAll({
+      where: buildingId ? { buildingId } : undefined,
       include: { all: true },
       attributes: { exclude: ['createdAt', 'updatedAt'] },
       order: [['date', 'ASC']],

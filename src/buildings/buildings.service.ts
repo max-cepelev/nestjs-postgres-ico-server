@@ -1,9 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
-import { FindOptions } from 'sequelize';
+import { FindOptions, WhereOptions } from 'sequelize';
+import { Area } from 'src/areas/entities/area.entity';
+import { City } from 'src/cities/entities/city.entity';
 import { Complex } from 'src/complexes/entities/complex.entity';
 import { Developer } from 'src/developers/entities/developer.entity';
 import { FilesService } from 'src/files/files.service';
+import { Property } from 'src/properties/entities/property.entity';
 import { Sale } from 'src/sales/entities/sale.entity';
 import { CreateBuildingDto } from './dto/create-building-dto';
 import { UpdateBuildingDto } from './dto/update-building-dto';
@@ -44,8 +47,88 @@ export class BuildingsService {
     return data;
   }
 
-  async create(dto: CreateBuildingDto) {
-    const response = await this.buildingRepository.create(dto);
+  async create(dto: CreateBuildingDto, img?: File) {
+    const fileName = img ? await this.fileService.createFile(img) : null;
+    const response = await this.buildingRepository.create({
+      ...dto,
+      img: fileName ?? null,
+    });
+    return response;
+  }
+
+  async update(id: number, dto: UpdateBuildingDto, img?: File) {
+    const fileName = img ? await this.fileService.createFile(img) : null;
+    const response = await this.buildingRepository.update(
+      {
+        ...dto,
+        img: fileName ? fileName : dto.img,
+      },
+      {
+        where: { id },
+      },
+    );
+    return response;
+  }
+
+  async remove(id: number) {
+    const response = await this.buildingRepository.destroy({ where: { id } });
+    return response;
+  }
+
+  async findOne(id: number) {
+    const response = await this.buildingRepository.findByPk(id, {
+      include: [Complex, Developer, City, Area, Sale],
+      attributes: { exclude: ['createdAt', 'updatedAt'] },
+      order: [[{ model: Sale, as: 'sales' }, 'date', 'ASC']],
+    });
+    return response;
+  }
+
+  async findOneWithProperties(id: number) {
+    const response = await this.buildingRepository.findByPk(id, {
+      include: [Complex, City, Property],
+      attributes: { exclude: ['createdAt', 'updatedAt'] },
+    });
+    return response;
+  }
+
+  async findAll(complexId?: number, cityId?: number, page?: number) {
+    let where: WhereOptions<Building> = undefined;
+    if (complexId && cityId) {
+      where = { complexId, cityId };
+    } else if (complexId) {
+      where = { complexId };
+    } else if (cityId) {
+      where = { cityId };
+    }
+
+    const options: FindOptions<Building> = {
+      include: [Complex, Developer],
+      attributes: { exclude: ['createdAt', 'updatedAt'] },
+      order: [['name', 'ASC']],
+      limit: page ? 15 : undefined,
+      offset: page ? (page - 1) * 15 : undefined,
+      where,
+    };
+
+    const total = await this.buildingRepository.count({
+      where,
+    });
+
+    const response = await this.buildingRepository.findAll(options);
+    return { buildings: response, total };
+  }
+
+  async findAllWithSales(cityId?: number) {
+    const response = await this.buildingRepository.findAll({
+      where: cityId ? { cityId } : undefined,
+      include: [Complex, Sale],
+      attributes: { exclude: ['createdAt', 'updatedAt'] },
+      order: [
+        ['name', 'ASC'],
+        [{ model: Sale, as: 'sales' }, 'date', 'ASC'],
+      ],
+    });
     return response;
   }
 
@@ -58,65 +141,6 @@ export class BuildingsService {
       },
     );
     return response;
-  }
-
-  async findAll(complexId?: number, page?: number) {
-    const options: FindOptions<Building> = {
-      include: [Complex, Developer],
-      attributes: { exclude: ['createdAt', 'updatedAt'] },
-      order: [['name', 'ASC']],
-      limit: page ? 15 : undefined,
-      offset: page ? (page - 1) * 15 : undefined,
-      where: complexId ? { complexId } : undefined,
-    };
-    const total = await this.buildingRepository.count({
-      where: complexId ? { complexId } : undefined,
-    });
-    const response = await this.buildingRepository.findAll(options);
-    return { buildings: response, total };
-  }
-
-  async findAllWithSales() {
-    const response = await this.buildingRepository.findAll({
-      include: [Complex, Sale],
-      attributes: { exclude: ['createdAt', 'updatedAt'] },
-      order: [
-        ['name', 'ASC'],
-        [{ model: Sale, as: 'sales' }, 'date', 'ASC'],
-      ],
-    });
-    return response;
-  }
-
-  async findOne(id: number) {
-    const response = await this.buildingRepository.findByPk(id, {
-      include: { all: true },
-      attributes: { exclude: ['createdAt', 'updatedAt'] },
-      order: [[{ model: Sale, as: 'sales' }, 'date', 'ASC']],
-    });
-    return response;
-  }
-
-  async update(id: number, dto: UpdateBuildingDto) {
-    const response = await this.buildingRepository.update(dto, {
-      where: { id },
-    });
-    return response;
-  }
-
-  async remove(id: number) {
-    const response = await this.buildingRepository.destroy({ where: { id } });
-    return response;
-  }
-
-  async getDynamicsByBuilding(buildingId: number) {
-    const data = await this.buildingRepository.findOne({
-      where: { id: buildingId },
-      include: [Sale, Complex],
-      order: [[{ model: Sale, as: 'sales' }, 'date', 'ASC']],
-    });
-
-    return data;
   }
 
   async getDynamicsByComplex(complexId: number) {

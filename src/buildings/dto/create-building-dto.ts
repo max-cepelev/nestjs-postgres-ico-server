@@ -18,4 +18,5 @@ export class CreateBuildingDto {
   readonly complexId: number;
   readonly developerId: number;
   readonly cityId: number;
+  readonly areaId: number;
 }

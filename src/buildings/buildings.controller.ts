@@ -21,50 +21,52 @@ import { UpdateBuildingDto } from './dto/update-building-dto';
 export class BuildingsController {
   constructor(private readonly buildingsService: BuildingsService) {}
 
-  // @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   @Post('bulk')
   bulkCreate(@Body() dto: CreateBuildingDto[]) {
     return this.buildingsService.bulkCreate(dto);
   }
 
-  @UseGuards(JwtAuthGuard)
-  @Post()
-  create(@Body() dto: CreateBuildingDto) {
-    return this.buildingsService.create(dto);
-  }
+  // @UseGuards(JwtAuthGuard)
+  // @Post()
+  // create(@Body() dto: CreateBuildingDto) {
+  //   return this.buildingsService.create(dto);
+  // }
 
   @UseGuards(JwtAuthGuard)
-  @Put(':id/upload')
+  @Post()
   @UseInterceptors(FileInterceptor('img'))
-  uploadImage(@Param('id') id: string, @UploadedFile() img: any) {
-    return this.buildingsService.uploadImage(id, img);
+  create(@Body() dto: CreateBuildingDto, @UploadedFile() img: any) {
+    return this.buildingsService.create(dto, img);
   }
+
+  // @UseGuards(JwtAuthGuard)
+  // @Put(':id/upload')
+  // @UseInterceptors(FileInterceptor('img'))
+  // uploadImage(@Param('id') id: string, @UploadedFile() img: any) {
+  //   return this.buildingsService.uploadImage(id, img);
+  // }
 
   @UseGuards(JwtAuthGuard)
   @Get()
   findAll(
     @Query('complexId') complexId?: number,
+    @Query('cityId') cityId?: number,
     @Query('page') page?: number,
   ) {
-    return this.buildingsService.findAll(complexId, page);
+    return this.buildingsService.findAll(complexId, cityId, page);
   }
 
   @UseGuards(JwtAuthGuard)
   @Get('sales')
-  findAllWithSales() {
-    return this.buildingsService.findAllWithSales();
+  findAllWithSales(@Query('cityId') cityId?: number) {
+    return this.buildingsService.findAllWithSales(cityId);
   }
 
   @UseGuards(JwtAuthGuard)
-  @Get('complex-dynamics')
-  getDinamicsByComplex(@Query('complexId') complexId: number) {
-    return this.buildingsService.getDynamicsByComplex(complexId);
-  }
-
-  @UseGuards(JwtAuthGuard)
-  @Get('dynamics')
-  getDinamicsByBuilding(@Query('buildingId') buildingId: number) {
-    return this.buildingsService.getDynamicsByBuilding(buildingId);
+  @Get('property')
+  findOneWithProperties(@Query('buildingId') buildingId: number) {
+    return this.buildingsService.findOneWithProperties(buildingId);
   }
 
   @UseGuards(JwtAuthGuard)
@@ -75,13 +77,24 @@ export class BuildingsController {
 
   @UseGuards(JwtAuthGuard)
   @Put(':id')
-  update(@Param('id') id: string, @Body() dto: UpdateBuildingDto) {
-    return this.buildingsService.update(+id, dto);
+  @UseInterceptors(FileInterceptor('img'))
+  update(
+    @Param('id') id: string,
+    @Body() dto: UpdateBuildingDto,
+    @UploadedFile() img?: any,
+  ) {
+    return this.buildingsService.update(+id, dto, img);
   }
 
   @UseGuards(JwtAuthGuard)
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.buildingsService.remove(+id);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('complex-dynamics')
+  getDinamicsByComplex(@Query('complexId') complexId: number) {
+    return this.buildingsService.getDynamicsByComplex(complexId);
   }
 }

@@ -29,19 +29,11 @@ export class ComplexesService {
     return complex;
   }
 
-  async findAll() {
+  async findAll(groupId?: number) {
     const complexes = await this.complexesRepository.findAll({
-      order: [['name', 'ASC']],
+      where: groupId ? { groupId: groupId == 0 ? null : groupId } : undefined,
       include: { all: true },
-    });
-    return complexes;
-  }
-
-  async findAllByGroup(groupId: number | null) {
-    const complexes = await this.complexesRepository.findAll({
-      where: { groupId: groupId ? groupId : null },
       order: [['name', 'ASC']],
-      include: { all: true },
     });
     return complexes;
   }

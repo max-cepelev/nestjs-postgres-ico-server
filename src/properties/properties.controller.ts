@@ -19,6 +19,12 @@ export class PropertiesController {
   constructor(private readonly propertiesService: PropertiesService) {}
 
   @UseGuards(JwtAuthGuard)
+  @Post('bulk')
+  createBulk(@Body() createPropertyDto: CreatePropertyDto[]) {
+    return this.propertiesService.createBulk(createPropertyDto);
+  }
+
+  @UseGuards(JwtAuthGuard)
   @Post()
   create(@Body() createPropertyDto: CreatePropertyDto) {
     return this.propertiesService.create(createPropertyDto);

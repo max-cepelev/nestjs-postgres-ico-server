@@ -35,16 +35,9 @@ export class DevelopersService {
     return developer;
   }
 
-  async findAll() {
+  async findAll(groupId?: number) {
     const developers = await this.developersRepository.findAll({
-      order: [['name', 'ASC']],
-    });
-    return developers;
-  }
-
-  async findAllByGroup(groupId: number | null) {
-    const developers = await this.developersRepository.findAll({
-      where: { groupId: groupId ? groupId : null },
+      where: groupId ? { groupId: groupId == 0 ? null : groupId } : undefined,
       include: { all: true },
       order: [['name', 'ASC']],
     });

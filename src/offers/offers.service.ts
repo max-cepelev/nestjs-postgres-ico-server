@@ -33,10 +33,11 @@ export class OffersService {
     @InjectModel(Offer) private offersRepository: typeof Offer, // @InjectBrowser() private  browser: Browser,
   ) {}
 
-  async getBuildingsData(buildingIds: number[]) {
-    const buildings = [];
-    for (const buildingId of buildingIds) {
-      if (buildingId) {
+  async getBuildingsData(buildings: { id: number; name: string }[]) {
+    const data = [];
+    for (const building of buildings) {
+      if (building.id) {
+        const buildingId = building.id;
         const offer = await this.offersRepository.findOne({
           where: { buildingId },
         });
@@ -55,8 +56,9 @@ export class OffersService {
         const actualDate = await this.offersRepository.max('updatedAt', {
           where: { buildingId },
         });
-        buildings.push({
+        data.push({
           id: buildingId,
+          name: building.name,
           complex: offer ? offer.complex : '',
           building: offer ? offer.building : '',
           developer: offer ? offer.developer : '',
@@ -73,7 +75,7 @@ export class OffersService {
         });
       }
     }
-    return buildings;
+    return data;
   }
 
   async getData(
@@ -344,7 +346,7 @@ export class OffersService {
     return result;
   }
 
-  async getAnalysisData(buildingIds: number[]) {
+  async getAnalysisData(buildings: { id: number; name: string }[]) {
     const analysisData: any[] = [];
 
     for (const param of allParams) {
@@ -363,7 +365,8 @@ export class OffersService {
 
       let res = { name };
 
-      for (const buildingId of buildingIds) {
+      for (const building of buildings) {
+        const buildingId = building.id;
         const resultCount = await this.offersRepository.count({
           where: {
             buildingId,
@@ -418,9 +421,9 @@ export class OffersService {
       }
       analysisData.push(res);
     }
-    const buildings = await this.getBuildingsData(buildingIds);
+    const buildingsData = await this.getBuildingsData(buildings);
 
-    return { analysisData, buildings };
+    return { analysisData, buildings: buildingsData };
   }
 
   async bulkCreate(dto: CreateOfferDto[]) {

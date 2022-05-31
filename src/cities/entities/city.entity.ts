@@ -7,6 +7,7 @@ import {
   Model,
   Table,
 } from 'sequelize-typescript';
+import { Area } from 'src/areas/entities/area.entity';
 import { Building } from 'src/buildings/entities/building.entity';
 import { Region } from 'src/regions/entities/region.entity';
 import { CreateCityDto } from '../dto/create-city.dto';
@@ -29,6 +30,9 @@ export class City extends Model<City, CreateCityDto> {
 
   @BelongsTo(() => Region)
   region: Region;
+
+  @HasMany(() => Area)
+  areas: Area[];
 
   @HasMany(() => Building)
   buildings: Building[];

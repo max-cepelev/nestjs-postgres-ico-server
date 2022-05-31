@@ -26,7 +26,6 @@ import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handleba
 import { OffersModule } from './offers/offers.module';
 import { Offer } from './offers/entities/offers.entity';
 import { ConfigModule } from '@nestjs/config';
-import { ServeStaticModule } from '@nestjs/serve-static';
 import { CitiesModule } from './cities/cities.module';
 import { RegionsModule } from './regions/regions.module';
 import { PropertiesModule } from './properties/properties.module';
@@ -35,6 +34,10 @@ import { City } from './cities/entities/city.entity';
 import { Region } from './regions/entities/region.entity';
 import { Property } from './properties/entities/property.entity';
 import { PropertyType } from './property-types/entities/property-type.entity';
+import { ParsingModule } from './parsing/parsing.module';
+import { AreasModule } from './areas/areas.module';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { Area } from './areas/entities/area.entity';
 
 @Module({
   imports: [
@@ -74,20 +77,21 @@ import { PropertyType } from './property-types/entities/property-type.entity';
       password: process.env.POSTGRES_PASSWORD,
       database: process.env.POSTGRES_DB,
       models: [
-        Lead,
-        User,
-        Role,
-        Building,
-        Complex,
-        Developer,
-        Group,
-        Sale,
-        Token,
-        Offer,
-        City,
         Region,
+        City,
+        Area,
+        Group,
+        Developer,
+        Complex,
+        Building,
         Property,
         PropertyType,
+        Offer,
+        Sale,
+        Role,
+        Lead,
+        User,
+        Token,
       ],
       autoLoadModels: true,
     }),
@@ -107,6 +111,8 @@ import { PropertyType } from './property-types/entities/property-type.entity';
     RegionsModule,
     PropertiesModule,
     PropertyTypesModule,
+    ParsingModule,
+    AreasModule,
   ],
   controllers: [],
   providers: [],
