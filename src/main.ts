@@ -14,7 +14,7 @@ async function bootstrap() {
       'https://price-skvortsy.permnovostroy.ru',
       'https://price-tango.permnovostroy.ru',
       'https://price-family.permnovostroy.ru',
-      'http://localhost:3001',
+      // 'http://localhost:3001',
     ],
     credentials: true,
   });
