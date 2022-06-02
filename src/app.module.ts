@@ -111,7 +111,7 @@ import { Area } from './areas/entities/area.entity';
     RegionsModule,
     PropertiesModule,
     PropertyTypesModule,
-    ParsingModule,
+    // ParsingModule,
     AreasModule,
   ],
   controllers: [],
