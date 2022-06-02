@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
+import { Group } from 'src/groups/entities/group.entity';
 import { CreateDeveloperDto } from './dto/create-developer-dto';
 import { UpdateDeveloperDto } from './dto/update-developer-dto';
 import { Developer } from './entities/developer.entity';
@@ -38,7 +39,7 @@ export class DevelopersService {
   async findAll(groupId?: number) {
     const developers = await this.developersRepository.findAll({
       where: groupId ? { groupId: groupId == 0 ? null : groupId } : undefined,
-      include: { all: true },
+      include: [Group],
       order: [['name', 'ASC']],
     });
     return developers;

@@ -6,4 +6,5 @@ export class CreateComplexDto {
   readonly domRfId: number | null;
   readonly domClickId: number | null;
   readonly cityId: number;
+  readonly areaId: number;
 }

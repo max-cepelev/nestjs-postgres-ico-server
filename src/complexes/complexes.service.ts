@@ -1,5 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
+import { Op } from 'sequelize';
+import { WhereOptions } from 'sequelize';
+import { Area } from 'src/areas/entities/area.entity';
+import { City } from 'src/cities/entities/city.entity';
+import { Group } from 'src/groups/entities/group.entity';
 import { CreateComplexDto } from './dto/create-complex-dto';
 import { UpdateComplexDto } from './dto/update-complex-dto';
 import { Complex } from './entities/complex.entity';
@@ -19,6 +24,8 @@ export class ComplexesService {
         'info',
         'domRfId',
         'domClickId',
+        'cityId',
+        'areaId',
       ],
     });
     return data;
@@ -29,10 +36,18 @@ export class ComplexesService {
     return complex;
   }
 
-  async findAll(groupId?: number) {
+  async findAll(groupId?: number, areaId?: number, cityId?: number) {
+    const keys = [];
+    groupId && keys.push({ groupId: groupId == 0 ? null : groupId });
+    areaId && keys.push({ areaId });
+    cityId && keys.push({ cityId });
+    const where: WhereOptions<Complex> = {
+      [Op.and]: keys,
+    };
+
     const complexes = await this.complexesRepository.findAll({
-      where: groupId ? { groupId: groupId == 0 ? null : groupId } : undefined,
-      include: { all: true },
+      where,
+      include: [City, Group, Area],
       order: [['name', 'ASC']],
     });
     return complexes;

@@ -16,7 +16,17 @@ export class PropertiesService {
   }
 
   async createBulk(dto: CreatePropertyDto[]) {
-    return await this.propertiesRepository.bulkCreate(dto);
+    return await this.propertiesRepository.bulkCreate(dto, {
+      updateOnDuplicate: [
+        'number',
+        'floor',
+        'entrance',
+        'totalArea',
+        'livingArea',
+        'rooms',
+        'wallHeight',
+      ],
+    });
   }
 
   async findAll(buildingId?: number, propertyTypeId?: number) {

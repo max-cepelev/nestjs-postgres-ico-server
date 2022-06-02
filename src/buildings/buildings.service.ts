@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
-import { FindOptions, WhereOptions } from 'sequelize';
+import { FindOptions, Op, WhereOptions } from 'sequelize';
 import { Area } from 'src/areas/entities/area.entity';
 import { City } from 'src/cities/entities/city.entity';
 import { Complex } from 'src/complexes/entities/complex.entity';
@@ -88,19 +88,18 @@ export class BuildingsService {
     const response = await this.buildingRepository.findByPk(id, {
       include: [Complex, City, Property],
       attributes: { exclude: ['createdAt', 'updatedAt'] },
+      order: [[{ model: Property, as: 'properties' }, 'number', 'ASC']],
     });
     return response;
   }
 
   async findAll(complexId?: number, cityId?: number, page?: number) {
-    let where: WhereOptions<Building> = undefined;
-    if (complexId && cityId) {
-      where = { complexId, cityId };
-    } else if (complexId) {
-      where = { complexId };
-    } else if (cityId) {
-      where = { cityId };
-    }
+    const keys = [];
+    complexId && keys.push({ complexId });
+    cityId && keys.push({ cityId });
+    const where: WhereOptions<Complex> = {
+      [Op.and]: keys,
+    };
 
     const options: FindOptions<Building> = {
       include: [Complex, Developer],

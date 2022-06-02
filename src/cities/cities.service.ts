@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
+import { Region } from 'src/regions/entities/region.entity';
 import { CreateCityDto } from './dto/create-city.dto';
 import { UpdateCityDto } from './dto/update-city.dto';
 import { City } from './entities/city.entity';
@@ -14,7 +15,8 @@ export class CitiesService {
   async findAll(regionId?: number) {
     return await this.citiesRepository.findAll({
       where: regionId ? { regionId } : undefined,
-      include: { all: true },
+      include: [Region],
+      order: [['name', 'ASC']],
     });
   }
 

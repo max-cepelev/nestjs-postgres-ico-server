@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
+import { City } from 'src/cities/entities/city.entity';
 import { CreateAreaDto } from './dto/create-area.dto';
 import { UpdateAreaDto } from './dto/update-area.dto';
 import { Area } from './entities/area.entity';
@@ -19,7 +20,8 @@ export class AreasService {
   async findAll(cityId?: number) {
     return await this.areasRepository.findAll({
       where: cityId ? { cityId } : undefined,
-      include: { all: true },
+      include: [City],
+      order: [['name', 'ASC']],
     });
   }
 
