@@ -8,5 +8,6 @@ import { Property } from './entities/property.entity';
   controllers: [PropertiesController],
   providers: [PropertiesService],
   imports: [SequelizeModule.forFeature([Property])],
+  exports: [PropertiesService],
 })
 export class PropertiesModule {}

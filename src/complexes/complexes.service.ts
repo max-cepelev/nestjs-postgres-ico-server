@@ -46,7 +46,7 @@ export class ComplexesService {
     };
 
     const complexes = await this.complexesRepository.findAll({
-      where,
+      where: keys.length > 0 ? where : undefined,
       include: [City, Group, Area],
       order: [['name', 'ASC']],
     });

@@ -52,9 +52,10 @@ export class BuildingsController {
   findAll(
     @Query('complexId') complexId?: number,
     @Query('cityId') cityId?: number,
+    @Query('areaId') areaId?: number,
     @Query('page') page?: number,
   ) {
-    return this.buildingsService.findAll(complexId, cityId, page);
+    return this.buildingsService.findAll(complexId, cityId, areaId, page);
   }
 
   @UseGuards(JwtAuthGuard)
@@ -64,15 +65,27 @@ export class BuildingsController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Get('property')
-  findOneWithProperties(@Query('buildingId') buildingId: number) {
+  @Get('property/:id')
+  findOneWithProperties(@Param('id') buildingId: number) {
     return this.buildingsService.findOneWithProperties(buildingId);
   }
 
   @UseGuards(JwtAuthGuard)
-  @Get(':id')
+  @Get('analitics/:id')
+  findOneWithAnalitics(@Param('id') id: string) {
+    return this.buildingsService.findOneWithAnalitics(+id);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('card/:id')
+  getCardData(@Param('id') id: string) {
+    return this.buildingsService.getBuildingCardData(+id);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('sales/:id')
   findOne(@Param('id') id: string) {
-    return this.buildingsService.findOne(+id);
+    return this.buildingsService.findOneWithSales(+id);
   }
 
   @UseGuards(JwtAuthGuard)

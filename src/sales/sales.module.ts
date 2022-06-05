@@ -8,5 +8,6 @@ import { SalesService } from './sales.service';
   controllers: [SalesController],
   providers: [SalesService],
   imports: [SequelizeModule.forFeature([Sale])],
+  exports: [SalesService],
 })
 export class SalesModule {}

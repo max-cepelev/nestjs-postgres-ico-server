@@ -31,8 +31,12 @@ export class ComplexesController {
 
   @UseGuards(JwtAuthGuard)
   @Get()
-  findAll(@Query('groupId') groupId?: number) {
-    return this.complexesService.findAll(groupId);
+  findAll(
+    @Query('groupId') groupId?: number,
+    @Query('areaId') areaId?: number,
+    @Query('cityId') cityId?: number,
+  ) {
+    return this.complexesService.findAll(groupId, areaId, cityId);
   }
 
   @UseGuards(JwtAuthGuard)

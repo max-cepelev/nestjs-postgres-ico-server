@@ -7,7 +7,10 @@ import { Complex } from 'src/complexes/entities/complex.entity';
 import { Developer } from 'src/developers/entities/developer.entity';
 import { FilesService } from 'src/files/files.service';
 import { Property } from 'src/properties/entities/property.entity';
+import { PropertiesService } from 'src/properties/properties.service';
+import { Region } from 'src/regions/entities/region.entity';
 import { Sale } from 'src/sales/entities/sale.entity';
+import { SalesService } from 'src/sales/sales.service';
 import { CreateBuildingDto } from './dto/create-building-dto';
 import { UpdateBuildingDto } from './dto/update-building-dto';
 import { Building } from './entities/building.entity';
@@ -17,6 +20,8 @@ export class BuildingsService {
   constructor(
     @InjectModel(Building) private buildingRepository: typeof Building,
     private fileService: FilesService,
+    private propertiesService: PropertiesService,
+    private salesService: SalesService,
   ) {}
 
   async bulkCreate(dto: CreateBuildingDto[]) {
@@ -75,28 +80,16 @@ export class BuildingsService {
     return response;
   }
 
-  async findOne(id: number) {
-    const response = await this.buildingRepository.findByPk(id, {
-      include: [Complex, Developer, City, Area, Sale],
-      attributes: { exclude: ['createdAt', 'updatedAt'] },
-      order: [[{ model: Sale, as: 'sales' }, 'date', 'ASC']],
-    });
-    return response;
-  }
-
-  async findOneWithProperties(id: number) {
-    const response = await this.buildingRepository.findByPk(id, {
-      include: [Complex, City, Property],
-      attributes: { exclude: ['createdAt', 'updatedAt'] },
-      order: [[{ model: Property, as: 'properties' }, 'number', 'ASC']],
-    });
-    return response;
-  }
-
-  async findAll(complexId?: number, cityId?: number, page?: number) {
+  async findAll(
+    complexId?: number,
+    cityId?: number,
+    areaId?: number,
+    page?: number,
+  ) {
     const keys = [];
     complexId && keys.push({ complexId });
     cityId && keys.push({ cityId });
+    areaId && keys.push({ areaId });
     const where: WhereOptions<Complex> = {
       [Op.and]: keys,
     };
@@ -118,6 +111,40 @@ export class BuildingsService {
     return { buildings: response, total };
   }
 
+  async findOneWithSales(id: number) {
+    const response = await this.buildingRepository.findByPk(id, {
+      include: [Complex, Sale],
+      attributes: { exclude: ['createdAt', 'updatedAt'] },
+      order: [[{ model: Sale, as: 'sales' }, 'date', 'ASC']],
+    });
+    return response;
+  }
+
+  async findOneWithAnalitics(id: number) {
+    const analitics = await this.propertiesService.getAnalytics(id);
+    const lastSale = await this.salesService.findLastRecord(id);
+    const response = await this.buildingRepository.findByPk(id, {
+      include: [
+        Complex,
+        Developer,
+        { model: City, include: [Region] },
+        Area,
+        Sale,
+      ],
+      attributes: { exclude: ['createdAt', 'updatedAt'] },
+    });
+    return { building: response, analitics, lastSale };
+  }
+
+  async findOneWithProperties(id: number) {
+    const response = await this.buildingRepository.findByPk(id, {
+      include: [Complex, Property],
+      attributes: { exclude: ['createdAt', 'updatedAt'] },
+      order: [[{ model: Property, as: 'properties' }, 'number', 'ASC']],
+    });
+    return response;
+  }
+
   async findAllWithSales(cityId?: number) {
     const response = await this.buildingRepository.findAll({
       where: cityId ? { cityId } : undefined,
@@ -129,6 +156,12 @@ export class BuildingsService {
       ],
     });
     return response;
+  }
+
+  async getBuildingCardData(id: number) {
+    const numberLiving = await this.propertiesService.getPropCount(id);
+    const lastSale = await this.salesService.findLastRecord(id);
+    return { numberLiving, lastSale };
   }
 
   async uploadImage(id: string, img?: File) {

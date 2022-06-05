@@ -40,9 +40,9 @@ export class PropertiesController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.propertiesService.findOne(+id);
+  @Get('count')
+  getCount(@Query('buildingId') buildingId?: number) {
+    return this.propertiesService.getPropCount(buildingId);
   }
 
   @UseGuards(JwtAuthGuard)

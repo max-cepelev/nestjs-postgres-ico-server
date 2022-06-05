@@ -37,9 +37,17 @@ export class SalesService {
   async findAll(buildingId?: number) {
     const sales = await this.salesRepository.findAll({
       where: buildingId ? { buildingId } : undefined,
-      include: { all: true },
       attributes: { exclude: ['createdAt', 'updatedAt'] },
       order: [['date', 'ASC']],
+    });
+    return sales;
+  }
+
+  async findLastRecord(buildingId: number) {
+    const sales = await this.salesRepository.findOne({
+      where: { buildingId },
+      attributes: { exclude: ['createdAt', 'updatedAt'] },
+      order: [['date', 'DESC']],
     });
     return sales;
   }

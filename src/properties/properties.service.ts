@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
+import sequelize, { FindAttributeOptions } from 'sequelize';
 import { FindOptions, WhereOptions } from 'sequelize';
 import { PropertyType } from 'src/property-types/entities/property-type.entity';
 import { CreatePropertyDto } from './dto/create-property.dto';
@@ -58,5 +59,63 @@ export class PropertiesService {
 
   async remove(id: number) {
     return await this.propertiesRepository.destroy({ where: { id } });
+  }
+
+  async getPropCount(buildingId: number) {
+    return await this.propertiesRepository.count({
+      where: { buildingId, propertyTypeId: 1 },
+    });
+  }
+
+  async getAnalytics(buildingId: number) {
+    const attributes: FindAttributeOptions = [
+      [sequelize.fn('COUNT', sequelize.col('id')), 'count'],
+      [sequelize.fn('SUM', sequelize.col('totalArea')), 'totalArea'],
+      [sequelize.fn('AVG', sequelize.col('totalArea')), 'avgArea'],
+      [sequelize.fn('MIN', sequelize.col('totalArea')), 'minArea'],
+      [sequelize.fn('MAX', sequelize.col('totalArea')), 'maxArea'],
+      [sequelize.fn('MIN', sequelize.col('wallHeight')), 'minWallHeight'],
+      [sequelize.fn('MAX', sequelize.col('wallHeight')), 'maxWallHeight'],
+    ];
+
+    const oneRoom = await this.propertiesRepository.findOne({
+      where: { buildingId, propertyTypeId: 1, rooms: 1 },
+      attributes,
+    });
+
+    const twoRoom = await this.propertiesRepository.findOne({
+      where: { buildingId, propertyTypeId: 1, rooms: 2 },
+      attributes,
+    });
+
+    const threeRoom = await this.propertiesRepository.findOne({
+      where: { buildingId, propertyTypeId: 1, rooms: 3 },
+      attributes,
+    });
+
+    const fourRoom = await this.propertiesRepository.findOne({
+      where: { buildingId, propertyTypeId: 1, rooms: 4 },
+      attributes,
+    });
+
+    const commercial = await this.propertiesRepository.findOne({
+      where: { buildingId, propertyTypeId: 2 },
+      attributes,
+    });
+
+    const parking = await this.propertiesRepository.findOne({
+      where: { buildingId, propertyTypeId: 3 },
+      attributes,
+    });
+    return {
+      living: {
+        oneRoom,
+        twoRoom,
+        threeRoom,
+        fourRoom,
+      },
+      commercial,
+      parking,
+    };
   }
 }
