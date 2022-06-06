@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
-import sequelize, { FindAttributeOptions } from 'sequelize';
+import sequelize, { FindAttributeOptions, Op } from 'sequelize';
 import { FindOptions, WhereOptions } from 'sequelize';
 import { PropertyType } from 'src/property-types/entities/property-type.entity';
 import { CreatePropertyDto } from './dto/create-property.dto';
@@ -31,17 +31,15 @@ export class PropertiesService {
   }
 
   async findAll(buildingId?: number, propertyTypeId?: number) {
-    let where: WhereOptions<Property> = undefined;
-    if (buildingId && propertyTypeId) {
-      where = { buildingId, propertyTypeId };
-    } else if (buildingId) {
-      where = { buildingId };
-    } else if (propertyTypeId) {
-      where = { propertyTypeId };
-    }
+    const keys = [];
+    buildingId && keys.push({ buildingId });
+    propertyTypeId && keys.push({ propertyTypeId });
+
+    const where: WhereOptions<Property> = {
+      [Op.and]: keys,
+    };
 
     const options: FindOptions<Property> = {
-      include: { model: PropertyType },
       attributes: { exclude: ['createdAt', 'updatedAt'] },
       where,
     };
@@ -98,6 +96,11 @@ export class PropertiesService {
       attributes,
     });
 
+    const living = await this.propertiesRepository.findOne({
+      where: { buildingId, propertyTypeId: 1 },
+      attributes,
+    });
+
     const commercial = await this.propertiesRepository.findOne({
       where: { buildingId, propertyTypeId: 2 },
       attributes,
@@ -108,14 +111,13 @@ export class PropertiesService {
       attributes,
     });
     return {
-      living: {
-        oneRoom,
-        twoRoom,
-        threeRoom,
-        fourRoom,
-      },
+      living,
       commercial,
       parking,
+      oneRoom,
+      twoRoom,
+      threeRoom,
+      fourRoom,
     };
   }
 }
