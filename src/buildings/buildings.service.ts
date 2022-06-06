@@ -6,6 +6,7 @@ import { City } from 'src/cities/entities/city.entity';
 import { Complex } from 'src/complexes/entities/complex.entity';
 import { Developer } from 'src/developers/entities/developer.entity';
 import { FilesService } from 'src/files/files.service';
+import { Group } from 'src/groups/entities/group.entity';
 import { Property } from 'src/properties/entities/property.entity';
 import { PropertiesService } from 'src/properties/properties.service';
 import { Region } from 'src/regions/entities/region.entity';
@@ -126,7 +127,7 @@ export class BuildingsService {
     const response = await this.buildingRepository.findByPk(id, {
       include: [
         Complex,
-        Developer,
+        { model: Developer, include: [Group] },
         { model: City, include: [Region] },
         Area,
         Sale,
