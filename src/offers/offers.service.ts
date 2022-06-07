@@ -352,8 +352,8 @@ export class OffersService {
     for (const param of allParams) {
       let name: string;
       let area: WhereAttributeHashValue<number>;
-      if (param === allParams[0]) {
-        name = `0 - ${param}`;
+      if (param === 0) {
+        name = `0 - ${allParams[1]}`;
         area = { [Op.lt]: allParams[1] };
       } else if (param === allParams[allParams.length - 1]) {
         name = `${param}+`;
