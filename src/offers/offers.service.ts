@@ -25,7 +25,7 @@ const oneRoomParams = getNumArray(25, 55, 5);
 const twoRoomParams = getNumArray(40, 70, 5);
 const threeRoomParams = getNumArray(60, 90, 5);
 const fourRoomParams = getNumArray(75, 105, 5);
-const allParams = getNumArray(25, 110, 5);
+const allParams = getNumArray(25, 105, 5);
 
 @Injectable()
 export class OffersService {
