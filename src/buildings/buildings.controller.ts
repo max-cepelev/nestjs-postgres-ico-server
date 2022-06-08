@@ -60,8 +60,11 @@ export class BuildingsController {
 
   @UseGuards(JwtAuthGuard)
   @Get('sales')
-  findAllWithSales(@Query('cityId') cityId?: number) {
-    return this.buildingsService.findAllWithSales(cityId);
+  findAllWithSales(
+    @Query('cityId') cityId?: number,
+    @Query('areaId') areaId?: number,
+  ) {
+    return this.buildingsService.findAllWithSales(cityId, areaId);
   }
 
   @UseGuards(JwtAuthGuard)
