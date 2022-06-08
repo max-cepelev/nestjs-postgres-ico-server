@@ -72,8 +72,6 @@ export class PropertiesService {
       [sequelize.fn('AVG', sequelize.col('totalArea')), 'avgArea'],
       [sequelize.fn('MIN', sequelize.col('totalArea')), 'minArea'],
       [sequelize.fn('MAX', sequelize.col('totalArea')), 'maxArea'],
-      [sequelize.fn('MIN', sequelize.col('wallHeight')), 'minWallHeight'],
-      [sequelize.fn('MAX', sequelize.col('wallHeight')), 'maxWallHeight'],
     ];
 
     const oneRoom = await this.propertiesRepository.findOne({
@@ -98,7 +96,13 @@ export class PropertiesService {
 
     const living = await this.propertiesRepository.findOne({
       where: { buildingId, propertyTypeId: 1 },
-      attributes,
+      attributes: [
+        ...attributes,
+        [sequelize.fn('MAX', sequelize.col('floor')), 'floors'],
+        [sequelize.fn('MAX', sequelize.col('entrance')), 'entrances'],
+        [sequelize.fn('MIN', sequelize.col('wallHeight')), 'minWallHeight'],
+        [sequelize.fn('MAX', sequelize.col('wallHeight')), 'maxWallHeight'],
+      ],
     });
 
     const commercial = await this.propertiesRepository.findOne({
