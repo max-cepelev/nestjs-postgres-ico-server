@@ -112,11 +112,21 @@ export class BuildingsService {
     return { buildings: response, total };
   }
 
-  async findOneWithSales(id: number) {
-    const response = await this.buildingRepository.findByPk(id, {
+  async findAllWithSales(cityId?: number, areaId?: number) {
+    const keys = [];
+    cityId && keys.push({ cityId });
+    areaId && keys.push({ areaId });
+    const where: WhereOptions<Complex> = {
+      [Op.and]: keys,
+    };
+    const response = await this.buildingRepository.findAll({
+      where,
       include: [Complex, Sale],
       attributes: { exclude: ['createdAt', 'updatedAt'] },
-      order: [[{ model: Sale, as: 'sales' }, 'date', 'ASC']],
+      order: [
+        ['name', 'ASC'],
+        [{ model: Sale, as: 'sales' }, 'date', 'ASC'],
+      ],
     });
     return response;
   }
