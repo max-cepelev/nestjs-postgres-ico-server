@@ -19,15 +19,6 @@ export class OffersController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Post('building-spaces')
-  findSpacesByBuildings(
-    @Body()
-    { buildingIds }: { buildingIds: number[] },
-  ) {
-    return this.offersService.findDataByBuildings(buildingIds);
-  }
-
-  @UseGuards(JwtAuthGuard)
   @Post('analysis')
   getAnalysisData(
     @Body()
@@ -36,21 +27,11 @@ export class OffersController {
     return this.offersService.getAnalysisData(buildings);
   }
 
-  @UseGuards(JwtAuthGuard)
-  @Get('buildings')
-  findDataByBuildings(
+  @Post('area')
+  getAreaAnalitics(
     @Body()
     { buildingIds }: { buildingIds: number[] },
   ) {
-    return this.offersService.findSpacesByBuildings(buildingIds);
-  }
-
-  @UseGuards(JwtAuthGuard)
-  @Get('complexes')
-  findDataByComplexes(
-    @Body()
-    { complexIds }: { complexIds: number[] },
-  ) {
-    return this.offersService.findSpacesByComplexes(complexIds);
+    return this.offersService.getAreaAnalitics(buildingIds);
   }
 }
