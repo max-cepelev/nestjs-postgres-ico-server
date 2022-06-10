@@ -133,6 +133,7 @@ export class BuildingsService {
         Sale,
       ],
       attributes: { exclude: ['createdAt', 'updatedAt'] },
+      order: [[{ model: Sale, as: 'sales' }, 'date', 'ASC']],
     });
     return { building: response, analitics, lastSale };
   }
