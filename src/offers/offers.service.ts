@@ -96,7 +96,7 @@ export class OffersService {
         let count4 = 0;
         if (resultCount > 0) {
           count1 = await this.offersRepository.count({
-            where: { buildingId, area, rooms: { [Op.or]: [0, 1] } },
+            where: { buildingId, area, rooms: [0, 1] },
           });
           count2 = await this.offersRepository.count({
             where: { buildingId, area, rooms: 2 },
@@ -162,7 +162,7 @@ export class OffersService {
       }
 
       const where: WhereOptions<Offer> = {
-        buildingId: { [Op.or]: buildingIds },
+        buildingId: buildingIds,
         area,
       };
 

@@ -1,12 +1,18 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
+import { Building } from 'src/buildings/entities/building.entity';
+import { Developer } from 'src/developers/entities/developer.entity';
+import { PropertiesService } from 'src/properties/properties.service';
 import { CreateGroupDto } from './dto/create-group-dto';
 import { UpdateGroupDto } from './dto/update-group-dto';
 import { Group } from './entities/group.entity';
 
 @Injectable()
 export class GroupsService {
-  constructor(@InjectModel(Group) private groupsRepository: typeof Group) {}
+  constructor(
+    @InjectModel(Group) private groupsRepository: typeof Group,
+    private propertiesService: PropertiesService,
+  ) {}
 
   async bulkCreate(dto: CreateGroupDto[]) {
     const data = await this.groupsRepository.bulkCreate(dto, {
@@ -16,28 +22,51 @@ export class GroupsService {
   }
 
   async create(dto: CreateGroupDto) {
-    const complex = await this.groupsRepository.create(dto);
-    return complex;
+    const group = await this.groupsRepository.create(dto);
+    return group;
   }
 
   async findAll() {
-    const complexes = await this.groupsRepository.findAll({
-      include: { all: true },
+    const groups = await this.groupsRepository.findAll({
       order: [['name', 'ASC']],
     });
-    return complexes;
+    return groups;
+  }
+
+  async findAllWithAnalitics() {
+    const data = await this.groupsRepository
+      .findAll({
+        include: [{ model: Developer, include: [Building] }],
+      })
+      .then(async (groups) => {
+        const groupsData = [];
+        for (const group of groups) {
+          const buildingIds = [];
+          for (const developer of group.developers) {
+            for (const building of developer.buildings) {
+              buildingIds.push(building.id);
+            }
+          }
+          const analitics = await this.propertiesService.getBuildingsAnalytics(
+            buildingIds,
+          );
+          groupsData.push({ name: group.name, analitics });
+        }
+        return groupsData;
+      });
+    return data;
   }
 
   async findOne(id: number) {
-    const complex = await this.groupsRepository.findByPk(id);
-    return complex;
+    const group = await this.groupsRepository.findByPk(id);
+    return group;
   }
 
   async update(id: number, dto: UpdateGroupDto) {
-    const complex = await this.groupsRepository.update(dto, {
+    const group = await this.groupsRepository.update(dto, {
       where: { id },
     });
-    return complex;
+    return group;
   }
 
   async remove(id: number) {

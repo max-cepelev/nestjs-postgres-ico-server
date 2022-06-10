@@ -36,6 +36,12 @@ export class GroupsController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @Get('analitics')
+  findAllWithAnalitics() {
+    return this.groupsService.findAllWithAnalitics();
+  }
+
+  @UseGuards(JwtAuthGuard)
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.groupsService.findOne(+id);

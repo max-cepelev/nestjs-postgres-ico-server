@@ -124,4 +124,34 @@ export class PropertiesService {
       fourRoom,
     };
   }
+
+  async getBuildingsAnalytics(buildingIds: number[]) {
+    const attributes: FindAttributeOptions = [
+      [sequelize.fn('COUNT', sequelize.col('id')), 'count'],
+      [sequelize.fn('SUM', sequelize.col('totalArea')), 'totalArea'],
+      [sequelize.fn('AVG', sequelize.col('totalArea')), 'avgArea'],
+      [sequelize.fn('MIN', sequelize.col('totalArea')), 'minArea'],
+      [sequelize.fn('MAX', sequelize.col('totalArea')), 'maxArea'],
+    ];
+
+    const living = await this.propertiesRepository.findOne({
+      where: { buildingId: buildingIds, propertyTypeId: 1 },
+      attributes,
+    });
+
+    const commercial = await this.propertiesRepository.findOne({
+      where: { buildingId: buildingIds, propertyTypeId: 2 },
+      attributes,
+    });
+
+    const parking = await this.propertiesRepository.findOne({
+      where: { buildingId: buildingIds, propertyTypeId: 3 },
+      attributes,
+    });
+    return {
+      living,
+      commercial,
+      parking,
+    };
+  }
 }

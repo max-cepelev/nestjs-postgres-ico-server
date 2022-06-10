@@ -9,6 +9,7 @@ async function bootstrap() {
   app.enableCors({
     origin: [
       'https://permnovostroy.ru',
+      'https://test.permnovostroy.ru',
       'https://price-gavan.permnovostroy.ru',
       'https://price-putejskaja.permnovostroy.ru',
       'https://price-skvortsy.permnovostroy.ru',
