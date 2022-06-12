@@ -7,8 +7,6 @@ export class CreateBuildingDto {
   readonly wallMaterial: string | null;
   readonly decorType: string | null;
   readonly img: string | null;
-  readonly floors: number | null;
-  readonly entrances: number | null;
   readonly passengerElevators: number | null;
   readonly freightElevators: number | null;
   readonly latitude: number | null;
@@ -19,4 +17,5 @@ export class CreateBuildingDto {
   readonly developerId: number;
   readonly cityId: number;
   readonly areaId: number;
+  readonly groupId: number;
 }

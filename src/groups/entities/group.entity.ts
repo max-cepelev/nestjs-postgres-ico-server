@@ -1,4 +1,5 @@
 import { Column, DataType, HasMany, Model, Table } from 'sequelize-typescript';
+import { Building } from 'src/buildings/entities/building.entity';
 import { Complex } from 'src/complexes/entities/complex.entity';
 import { Developer } from '../../developers/entities/developer.entity';
 import { CreateGroupDto } from '../dto/create-group-dto';
@@ -18,9 +19,12 @@ export class Group extends Model<Group, CreateGroupDto> {
   @Column({ type: DataType.STRING })
   regions: string;
 
-  @HasMany(() => Complex)
-  complexes: Complex[];
+  @HasMany(() => Building)
+  buildings: Building[];
 
   @HasMany(() => Developer)
   developers: Developer[];
+
+  @HasMany(() => Complex)
+  complexes: Complex[];
 }

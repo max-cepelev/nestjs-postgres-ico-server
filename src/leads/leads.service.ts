@@ -10,7 +10,21 @@ export class LeadsService {
   constructor(@InjectModel(Lead) private leadsRepository: typeof Lead) {}
 
   async createBulk(dto: CreateLeadDto[]) {
-    const complexes = await this.leadsRepository.bulkCreate(dto);
+    const complexes = await this.leadsRepository.bulkCreate(dto, {
+      updateOnDuplicate: [
+        'host',
+        'name',
+        'phone',
+        'email',
+        'form_name',
+        'form_id',
+        'tran_id',
+        'utm_source',
+        'utm_medium',
+        'utm_campaign',
+        'utm_term',
+      ],
+    });
     return complexes;
   }
 

@@ -11,6 +11,7 @@ import { Area } from 'src/areas/entities/area.entity';
 import { City } from 'src/cities/entities/city.entity';
 import { Complex } from 'src/complexes/entities/complex.entity';
 import { Developer } from 'src/developers/entities/developer.entity';
+import { Group } from 'src/groups/entities/group.entity';
 import { Property } from 'src/properties/entities/property.entity';
 import { Sale } from '../../sales/entities/sale.entity';
 import { CreateBuildingDto } from '../dto/create-building-dto';
@@ -46,12 +47,6 @@ export class Building extends Model<Building, CreateBuildingDto> {
   decorType: string;
 
   @Column({ type: DataType.INTEGER })
-  floors: number;
-
-  @Column({ type: DataType.INTEGER })
-  entrances: number;
-
-  @Column({ type: DataType.INTEGER })
   passengerElevators: number;
 
   @Column({ type: DataType.INTEGER })
@@ -72,33 +67,40 @@ export class Building extends Model<Building, CreateBuildingDto> {
   @Column({ type: DataType.INTEGER })
   domClickId: number;
 
-  @ForeignKey(() => Complex)
-  @Column({ type: DataType.INTEGER, allowNull: false })
-  complexId: number;
-
-  @ForeignKey(() => Developer)
-  @Column({ type: DataType.INTEGER, allowNull: false })
-  developerId: number;
-
   @ForeignKey(() => City)
   @Column({ type: DataType.INTEGER, allowNull: false })
   cityId: number;
+
+  @BelongsTo(() => City)
+  city: City;
 
   @ForeignKey(() => Area)
   @Column({ type: DataType.INTEGER, allowNull: false })
   areaId: number;
 
-  @BelongsTo(() => Complex)
-  complex: Complex;
+  @BelongsTo(() => Area)
+  area: Area;
+
+  @ForeignKey(() => Group)
+  @Column({ type: DataType.INTEGER, allowNull: false })
+  groupId: number;
+
+  @BelongsTo(() => Group)
+  group: Group;
+
+  @ForeignKey(() => Developer)
+  @Column({ type: DataType.INTEGER, allowNull: false })
+  developerId: number;
 
   @BelongsTo(() => Developer)
   developer: Developer;
 
-  @BelongsTo(() => City)
-  city: City;
+  @ForeignKey(() => Complex)
+  @Column({ type: DataType.INTEGER, allowNull: false })
+  complexId: number;
 
-  @BelongsTo(() => Area)
-  area: Area;
+  @BelongsTo(() => Complex)
+  complex: Complex;
 
   @HasMany(() => Sale)
   sales: Sale[];

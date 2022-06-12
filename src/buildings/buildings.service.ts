@@ -35,8 +35,6 @@ export class BuildingsService {
         'propertyClass',
         'wallMaterial',
         'decorType',
-        'floors',
-        'entrances',
         'passengerElevators',
         'freightElevators',
         'latitude',
@@ -47,6 +45,8 @@ export class BuildingsService {
         'complexId',
         'developerId',
         'cityId',
+        'groupId',
+        'areaId',
       ],
     });
 
@@ -81,17 +81,25 @@ export class BuildingsService {
     return response;
   }
 
-  async findAll(
-    complexId?: number,
-    cityId?: number,
-    areaId?: number,
-    page?: number,
-  ) {
+  async findAll({
+    complexId,
+    cityId,
+    areaId,
+    inWork,
+    page,
+  }: {
+    complexId?: number;
+    cityId?: number;
+    areaId?: number;
+    inWork?: 1 | 0;
+    page?: number;
+  }) {
     const keys = [];
+    inWork && keys.push({ commissioned: !Boolean(+inWork) });
     complexId && keys.push({ complexId });
     cityId && keys.push({ cityId });
     areaId && keys.push({ areaId });
-    const where: WhereOptions<Complex> = {
+    const where: WhereOptions<Building> = {
       [Op.and]: keys,
     };
 

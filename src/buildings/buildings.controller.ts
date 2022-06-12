@@ -53,9 +53,16 @@ export class BuildingsController {
     @Query('complexId') complexId?: number,
     @Query('cityId') cityId?: number,
     @Query('areaId') areaId?: number,
+    @Query('inWork') inWork?: 1 | 0,
     @Query('page') page?: number,
   ) {
-    return this.buildingsService.findAll(complexId, cityId, areaId, page);
+    return this.buildingsService.findAll({
+      complexId,
+      cityId,
+      areaId,
+      inWork,
+      page,
+    });
   }
 
   @UseGuards(JwtAuthGuard)
