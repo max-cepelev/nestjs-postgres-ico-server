@@ -104,7 +104,7 @@ export class BuildingsService {
     };
 
     const options: FindOptions<Building> = {
-      include: [Complex, Developer],
+      include: [Group, Complex, Developer],
       attributes: { exclude: ['createdAt', 'updatedAt'] },
       order: [['name', 'ASC']],
       limit: page ? 15 : undefined,
@@ -122,7 +122,7 @@ export class BuildingsService {
 
   async findOneWithSales(id: number) {
     const response = await this.buildingRepository.findByPk(id, {
-      include: [Complex, Sale],
+      include: [Group, Complex, Sale],
       attributes: { exclude: ['createdAt', 'updatedAt'] },
       order: [[{ model: Sale, as: 'sales' }, 'date', 'ASC']],
     });
