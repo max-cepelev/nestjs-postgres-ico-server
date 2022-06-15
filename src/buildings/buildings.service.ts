@@ -83,11 +83,13 @@ export class BuildingsService {
 
   async findAll({
     complexId,
+    groupId,
     cityId,
     areaId,
     inWork,
     page,
   }: {
+    groupId?: number;
     complexId?: number;
     cityId?: number;
     areaId?: number;
@@ -96,6 +98,7 @@ export class BuildingsService {
   }) {
     const keys = [];
     inWork && keys.push({ commissioned: !Boolean(+inWork) });
+    groupId && keys.push({ groupId });
     complexId && keys.push({ complexId });
     cityId && keys.push({ cityId });
     areaId && keys.push({ areaId });

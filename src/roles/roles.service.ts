@@ -10,6 +10,11 @@ export class RolesService {
     private roleRepository: typeof Role,
   ) {}
 
+  async createBulk(dto: CreateRoleDto[]) {
+    const layout = await this.roleRepository.bulkCreate(dto);
+    return layout;
+  }
+
   async create(dto: CreateRoleDto) {
     const layout = await this.roleRepository.create(dto);
     return layout;

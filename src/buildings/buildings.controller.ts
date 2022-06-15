@@ -50,6 +50,7 @@ export class BuildingsController {
   @UseGuards(JwtAuthGuard)
   @Get()
   findAll(
+    @Query('groupId') groupId?: number,
     @Query('complexId') complexId?: number,
     @Query('cityId') cityId?: number,
     @Query('areaId') areaId?: number,
@@ -57,6 +58,7 @@ export class BuildingsController {
     @Query('page') page?: number,
   ) {
     return this.buildingsService.findAll({
+      groupId,
       complexId,
       cityId,
       areaId,

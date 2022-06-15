@@ -23,6 +23,12 @@ export class RolesController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @Post('bulk')
+  createBulk(@Body() dto: CreateRoleDto[]) {
+    return this.rolesService.createBulk(dto);
+  }
+
+  @UseGuards(JwtAuthGuard)
   @Get()
   findAll() {
     return this.rolesService.findAll();
