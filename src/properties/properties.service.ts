@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import sequelize, { FindAttributeOptions, Op } from 'sequelize';
 import { FindOptions, WhereOptions } from 'sequelize';
-import { PropertyType } from 'src/property-types/entities/property-type.entity';
 import { CreatePropertyDto } from './dto/create-property.dto';
 import { UpdatePropertyDto } from './dto/update-property.dto';
 import { Property } from './entities/property.entity';

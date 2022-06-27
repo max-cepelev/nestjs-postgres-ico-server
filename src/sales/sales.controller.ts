@@ -37,6 +37,12 @@ export class SalesController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @Get('analitics')
+  getSalesAnalitics() {
+    return this.salesService.getSalesAnalitics();
+  }
+
+  @UseGuards(JwtAuthGuard)
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.salesService.findOne(+id);

@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/sequelize';
 import { Building } from 'src/buildings/entities/building.entity';
 import { Developer } from 'src/developers/entities/developer.entity';
 import { PropertiesService } from 'src/properties/properties.service';
+import { SalesService } from 'src/sales/sales.service';
 import { CreateGroupDto } from './dto/create-group-dto';
 import { UpdateGroupDto } from './dto/update-group-dto';
 import { Group } from './entities/group.entity';
@@ -12,6 +13,7 @@ export class GroupsService {
   constructor(
     @InjectModel(Group) private groupsRepository: typeof Group,
     private propertiesService: PropertiesService,
+    private salesService: SalesService,
   ) {}
 
   async bulkCreate(dto: CreateGroupDto[]) {
@@ -51,6 +53,31 @@ export class GroupsService {
             buildingIds,
           );
           groupsData.push({ name: group.name, analitics });
+        }
+        return groupsData;
+      });
+    return data;
+  }
+
+  async findAllWithSalesCount(date: string) {
+    const data = await this.groupsRepository
+      .findAll({
+        include: [{ model: Developer, include: [Building] }],
+      })
+      .then(async (groups) => {
+        const groupsData = [];
+        for (const group of groups) {
+          const buildingIds = [];
+          for (const developer of group.developers) {
+            for (const building of developer.buildings) {
+              buildingIds.push(building.id);
+            }
+          }
+          const sales = await this.salesService.getGroupSales(
+            date,
+            buildingIds,
+          );
+          groupsData.push({ id: group.id, name: group.name, sales });
         }
         return groupsData;
       });

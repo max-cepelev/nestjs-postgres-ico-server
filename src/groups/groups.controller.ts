@@ -6,6 +6,7 @@ import {
   Param,
   Post,
   Put,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
@@ -39,6 +40,12 @@ export class GroupsController {
   @Get('analitics')
   findAllWithAnalitics() {
     return this.groupsService.findAllWithAnalitics();
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('sales')
+  findAllWithSalesCount(@Query('date') date: string) {
+    return this.groupsService.findAllWithSalesCount(date);
   }
 
   @UseGuards(JwtAuthGuard)
