@@ -1,23 +1,13 @@
 export class CreateSaleDto {
   readonly date: string;
 
-  readonly numberLiving: number;
+  readonly number: number;
 
-  readonly areaLiving: number;
+  readonly area: number;
 
-  readonly priceLiving: number;
+  readonly price: number;
 
-  readonly numberNonResidental: number;
-
-  readonly areaNonResidental: number;
-
-  readonly priceNonResidental: number;
-
-  readonly numberParkingSpace: number;
-
-  readonly areaParkingSpace: number;
-
-  readonly priceParkingSpace: number;
+  readonly propertyTypeId: number;
 
   readonly buildingId: number;
 }

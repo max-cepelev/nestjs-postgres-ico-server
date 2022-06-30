@@ -60,6 +60,7 @@ export class GroupsService {
   }
 
   async findAllWithSalesCount(date: string) {
+    const dt = new Date(date);
     const data = await this.groupsRepository
       .findAll({
         include: [{ model: Developer, include: [Building] }],
@@ -73,11 +74,11 @@ export class GroupsService {
               buildingIds.push(building.id);
             }
           }
-          const sales = await this.salesService.getGroupSales(
-            date,
+          const sales = await this.salesService.getSalesSum({
+            date: dt,
             buildingIds,
-          );
-          groupsData.push({ id: group.id, name: group.name, sales });
+          });
+          groupsData.push({ id: group.id, name: group.name, ...sales });
         }
         return groupsData;
       });

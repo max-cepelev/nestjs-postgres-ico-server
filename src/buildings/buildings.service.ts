@@ -134,7 +134,7 @@ export class BuildingsService {
 
   async findOneWithAnalitics(id: number) {
     const analitics = await this.propertiesService.getAnalytics(id);
-    const lastSale = await this.salesService.findLastRecord(id);
+    const sales = await this.salesService.getSalesSum({ buildingIds: [id] });
     const response = await this.buildingRepository.findByPk(id, {
       include: [
         Complex,
@@ -146,7 +146,7 @@ export class BuildingsService {
       attributes: { exclude: ['createdAt', 'updatedAt'] },
       order: [[{ model: Sale, as: 'sales' }, 'date', 'ASC']],
     });
-    return { building: response, analitics, lastSale };
+    return { building: response, analitics, sales };
   }
 
   async findOneWithProperties(id: number) {
@@ -158,29 +158,10 @@ export class BuildingsService {
     return response;
   }
 
-  async findAllWithSales(cityId?: number, areaId?: number) {
-    const keys = [];
-    cityId && keys.push({ cityId });
-    areaId && keys.push({ areaId });
-    const where: WhereOptions<Complex> = {
-      [Op.and]: keys,
-    };
-    const response = await this.buildingRepository.findAll({
-      where,
-      include: [Complex, Sale],
-      attributes: { exclude: ['createdAt', 'updatedAt'] },
-      order: [
-        ['name', 'ASC'],
-        [{ model: Sale, as: 'sales' }, 'date', 'ASC'],
-      ],
-    });
-    return response;
-  }
-
   async getBuildingCardData(id: number) {
     const numberLiving = await this.propertiesService.getPropCount(id);
-    const lastSale = await this.salesService.findLastRecord(id);
-    return { numberLiving, lastSale };
+    const sales = await this.salesService.getSalesSum({ buildingIds: [id] });
+    return { numberLiving, sales };
   }
 
   async uploadImage(id: string, img?: File) {

@@ -7,6 +7,7 @@ import {
   Table,
 } from 'sequelize-typescript';
 import { Building } from 'src/buildings/entities/building.entity';
+import { PropertyType } from 'src/property-types/entities/property-type.entity';
 import { CreateSaleDto } from '../dto/create-sale-dto';
 
 @Table({ tableName: 'sales' })
@@ -21,36 +22,25 @@ export class Sale extends Model<Sale, CreateSaleDto> {
   @Column({ type: DataType.DATE, allowNull: false })
   date: string;
 
-  @Column({ type: DataType.INTEGER })
-  numberLiving: number;
+  @Column({ type: DataType.INTEGER, allowNull: false })
+  number: number;
 
-  @Column({ type: DataType.FLOAT })
-  areaLiving: number;
+  @Column({ type: DataType.FLOAT, allowNull: false })
+  area: number;
 
-  @Column({ type: DataType.FLOAT })
-  priceLiving: number;
-
-  @Column({ type: DataType.INTEGER })
-  numberNonResidental: number;
-
-  @Column({ type: DataType.FLOAT })
-  areaNonResidental: number;
-
-  @Column({ type: DataType.FLOAT })
-  priceNonResidental: number;
-
-  @Column({ type: DataType.INTEGER })
-  numberParkingSpace: number;
-
-  @Column({ type: DataType.FLOAT })
-  areaParkingSpace: number;
-
-  @Column({ type: DataType.FLOAT })
-  priceParkingSpace: number;
+  @Column({ type: DataType.FLOAT, allowNull: false })
+  price: number;
 
   @ForeignKey(() => Building)
-  @Column({ type: DataType.INTEGER })
+  @Column({ type: DataType.INTEGER, allowNull: false })
   buildingId: number;
+
+  @ForeignKey(() => PropertyType)
+  @Column({ type: DataType.INTEGER, allowNull: false })
+  propertyTypeId: number;
+
+  @BelongsTo(() => PropertyType)
+  propertyType: PropertyType;
 
   @BelongsTo(() => Building)
   building: Building;

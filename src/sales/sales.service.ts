@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
-import sequelize, { Op } from 'sequelize';
+import sequelize, { FindAttributeOptions, Op, WhereOptions } from 'sequelize';
 import { Building } from 'src/buildings/entities/building.entity';
+import { Property } from 'src/properties/entities/property.entity';
 import { CreateSaleDto } from './dto/create-sale-dto';
 import { UpdateSaleDto } from './dto/update-sale-dto';
 import { Sale } from './entities/sale.entity';
@@ -14,15 +15,10 @@ export class SalesService {
     const data = await this.salesRepository.bulkCreate(dto, {
       updateOnDuplicate: [
         'date',
-        'numberLiving',
-        'areaLiving',
-        'priceLiving',
-        'numberNonResidental',
-        'areaNonResidental',
-        'priceNonResidental',
-        'numberParkingSpace',
-        'areaParkingSpace',
-        'priceParkingSpace',
+        'number',
+        'area',
+        'price',
+        'propertyTypeId',
         'buildingId',
       ],
     });
@@ -35,9 +31,16 @@ export class SalesService {
     return sale;
   }
 
-  async findAll(buildingId?: number) {
+  async findAll(buildingId?: number, propertyTypeId?: number) {
+    const keys = [];
+    buildingId && keys.push({ buildingId });
+    propertyTypeId && keys.push({ propertyTypeId });
+
+    const where: WhereOptions<Property> = {
+      [Op.and]: keys,
+    };
     const sales = await this.salesRepository.findAll({
-      where: buildingId ? { buildingId } : undefined,
+      where,
       attributes: { exclude: ['createdAt', 'updatedAt'] },
       order: [['date', 'ASC']],
     });
@@ -55,113 +58,70 @@ export class SalesService {
 
     const data = [];
     while (startDate < endDate) {
-      const sale = await this.salesRepository.findOne({
-        where: {
-          [Op.and]: [
-            sequelize.where(
-              sequelize.fn('DATE_PART', 'year', sequelize.col('date')),
-              startDate.getFullYear(),
-            ),
-            sequelize.where(
-              sequelize.fn('DATE_PART', 'month', sequelize.col('date')),
-              startDate.getMonth() + 1,
-            ),
-          ],
-        },
-        attributes: [
-          [sequelize.fn('SUM', sequelize.col('numberLiving')), 'livingNumber'],
-          [sequelize.fn('SUM', sequelize.col('areaLiving')), 'livingArea'],
-          [sequelize.fn('SUM', sequelize.col('priceLiving')), 'livingPrice'],
-          [
-            sequelize.fn('SUM', sequelize.col('numberNonResidental')),
-            'commercialNumber',
-          ],
-          [
-            sequelize.fn('SUM', sequelize.col('areaNonResidental')),
-            'commercialArea',
-          ],
-          [
-            sequelize.fn('SUM', sequelize.col('priceNonResidental')),
-            'commercialPrice',
-          ],
-          [
-            sequelize.fn('SUM', sequelize.col('numberParkingSpace')),
-            'parkingNumber',
-          ],
-          [
-            sequelize.fn('SUM', sequelize.col('areaParkingSpace')),
-            'parkingArea',
-          ],
-          [
-            sequelize.fn('SUM', sequelize.col('priceParkingSpace')),
-            'parkingPrice',
-          ],
-        ],
-      });
+      const sales = await this.getSalesSum({ date: startDate });
       data.push({
         date: startDate.toISOString(),
-        sale,
+        ...sales,
       });
       startDate.setMonth(startDate.getMonth() + 1);
     }
     return data;
   }
 
-  async getGroupSales(date: string, buildingIds: number[]) {
-    const dt = new Date(date);
-
-    const sale = await this.salesRepository.findOne({
-      where: {
-        [Op.and]: [
-          { buildingId: buildingIds },
+  async getSalesSum({
+    buildingIds,
+    date,
+  }: { buildingIds?: number[]; date?: Date } | undefined) {
+    const whereOptions: any[] = date
+      ? [
           sequelize.where(
             sequelize.fn('DATE_PART', 'year', sequelize.col('date')),
-            dt.getFullYear(),
+            date.getFullYear(),
           ),
           sequelize.where(
             sequelize.fn('DATE_PART', 'month', sequelize.col('date')),
-            dt.getMonth() + 1,
+            date.getMonth() + 1,
           ),
-        ],
+        ]
+      : [];
+
+    buildingIds && whereOptions.push({ buildingId: buildingIds });
+    date &&
+      whereOptions.push(
+        sequelize.where(
+          sequelize.fn('DATE_PART', 'year', sequelize.col('date')),
+          date.getFullYear(),
+        ),
+        sequelize.where(
+          sequelize.fn('DATE_PART', 'month', sequelize.col('date')),
+          date.getMonth() + 1,
+        ),
+      );
+    const attributes: FindAttributeOptions = [
+      [sequelize.fn('SUM', sequelize.col('number')), 'number'],
+      [sequelize.fn('SUM', sequelize.col('area')), 'area'],
+      [sequelize.fn('SUM', sequelize.col('price')), 'price'],
+    ];
+    const living = await this.salesRepository.findOne({
+      where: {
+        [Op.and]: [{ propertyTypeId: 1 }, ...whereOptions],
       },
-      attributes: [
-        [sequelize.fn('SUM', sequelize.col('numberLiving')), 'livingNumber'],
-        [sequelize.fn('SUM', sequelize.col('areaLiving')), 'livingArea'],
-        [sequelize.fn('SUM', sequelize.col('priceLiving')), 'livingPrice'],
-        [
-          sequelize.fn('SUM', sequelize.col('numberNonResidental')),
-          'commercialNumber',
-        ],
-        [
-          sequelize.fn('SUM', sequelize.col('areaNonResidental')),
-          'commercialArea',
-        ],
-        [
-          sequelize.fn('SUM', sequelize.col('priceNonResidental')),
-          'commercialPrice',
-        ],
-        [
-          sequelize.fn('SUM', sequelize.col('numberParkingSpace')),
-          'parkingNumber',
-        ],
-        [sequelize.fn('SUM', sequelize.col('areaParkingSpace')), 'parkingArea'],
-        [
-          sequelize.fn('SUM', sequelize.col('priceParkingSpace')),
-          'parkingPrice',
-        ],
-      ],
+      attributes,
+    });
+    const commercial = await this.salesRepository.findOne({
+      where: {
+        [Op.and]: [{ propertyTypeId: 2 }, ...whereOptions],
+      },
+      attributes,
+    });
+    const parking = await this.salesRepository.findOne({
+      where: {
+        [Op.and]: [{ propertyTypeId: 3 }, ...whereOptions],
+      },
+      attributes,
     });
 
-    return sale;
-  }
-
-  async findLastRecord(buildingId: number) {
-    const sales = await this.salesRepository.findOne({
-      where: { buildingId },
-      attributes: { exclude: ['createdAt', 'updatedAt'] },
-      order: [['date', 'DESC']],
-    });
-    return sales;
+    return { living, commercial, parking };
   }
 
   async findOne(id: number) {
