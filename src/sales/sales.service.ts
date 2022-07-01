@@ -48,13 +48,20 @@ export class SalesService {
   }
 
   async getSalesAnalitics() {
-    const now = new Date();
+    const lastRecord = await this.salesRepository.findOne({
+      attributes: [[sequelize.fn('MAX', sequelize.col('date')), 'date']],
+    });
+    const now = lastRecord ? new Date(lastRecord.date) : new Date();
     const startDate = new Date(
       now.getFullYear() - 1,
-      now.getMonth() - 1,
+      now.getMonth(),
       now.getDay(),
     );
-    const endDate = new Date(now.getFullYear(), now.getMonth(), now.getDay());
+    const endDate = new Date(
+      now.getFullYear(),
+      now.getMonth() + 1,
+      now.getDay(),
+    );
 
     const data = [];
     while (startDate < endDate) {
@@ -72,18 +79,7 @@ export class SalesService {
     buildingIds,
     date,
   }: { buildingIds?: number[]; date?: Date } | undefined) {
-    const whereOptions: any[] = date
-      ? [
-          sequelize.where(
-            sequelize.fn('DATE_PART', 'year', sequelize.col('date')),
-            date.getFullYear(),
-          ),
-          sequelize.where(
-            sequelize.fn('DATE_PART', 'month', sequelize.col('date')),
-            date.getMonth() + 1,
-          ),
-        ]
-      : [];
+    const whereOptions: any[] = [];
 
     buildingIds && whereOptions.push({ buildingId: buildingIds });
     date &&
