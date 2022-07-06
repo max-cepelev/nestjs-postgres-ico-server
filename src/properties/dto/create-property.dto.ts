@@ -1,5 +1,5 @@
 export class CreatePropertyDto {
-  readonly number: number;
+  readonly number: string;
   readonly floor: number;
   readonly entrance: number | null;
   readonly totalArea: number;

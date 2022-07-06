@@ -19,8 +19,8 @@ export class Property extends Model<Property, CreatePropertyDto> {
   })
   id: number;
 
-  @Column({ type: DataType.INTEGER, allowNull: false })
-  number: number;
+  @Column({ type: DataType.STRING, allowNull: false })
+  number: string;
 
   @Column({ type: DataType.INTEGER, allowNull: false })
   floor: number;

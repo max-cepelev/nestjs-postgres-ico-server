@@ -5,6 +5,11 @@ import { MacroService } from './macro.service';
 export class MacroController {
   constructor(private readonly macroService: MacroService) {}
 
+  @Get('complexes')
+  getComplexes() {
+    return this.macroService.getComplexes();
+  }
+
   @Get('gavan')
   getGavan() {
     return this.macroService.getGavan();
@@ -24,12 +29,12 @@ export class MacroController {
   getPut() {
     return this.macroService.getPut();
   }
-  
+
   @Get('family')
   getFamily() {
     return this.macroService.getFamily();
   }
-  
+
   @Get('vse-svoi')
   getVseSvoi() {
     return this.macroService.getVseSvoi();

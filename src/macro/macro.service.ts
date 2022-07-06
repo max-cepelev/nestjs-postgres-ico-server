@@ -1,8 +1,8 @@
-
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { HttpService } from 'nestjs-http-promise';
 import { getMacroDataV1, getMacroDataV2 } from 'src/helpers/transformMacroData';
 import { IMacroData } from './entities/macro.data';
+import md5 from 'md5';
 
 const baseUrl = 'https://api.macroserver.ru/estate/export/web/';
 
@@ -103,8 +103,8 @@ export class MacroService {
       );
     }
   }
-    
-    async getVseSvoi() {
+
+  async getVseSvoi() {
     try {
       const params = {
         feed_id: 1664,
@@ -114,6 +114,30 @@ export class MacroService {
         { params, timeout: 3000 },
       );
       return getMacroDataV1(response.data);
+    } catch (error) {
+      console.log(error);
+      throw new HttpException(
+        'Произошла ошибка при получении данных',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  async getComplexes() {
+    try {
+      const domain = 'alfa.permnovostroy.ru';
+      const time = Date.now();
+      const params = {
+        // type: 'living',
+        domain,
+        time,
+        token: md5(domain + time + '2P6Qnmu2BhvrD9pf53ulGR3nR3KgDvZ3M8gs'),
+      };
+      const response = await this.httpService.get(
+        `https://api.macroserver.ru/estate/group/getFloorPlans`,
+        { params, timeout: 3000 },
+      );
+      return response.data;
     } catch (error) {
       console.log(error);
       throw new HttpException(
