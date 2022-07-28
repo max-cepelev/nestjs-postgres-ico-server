@@ -38,6 +38,8 @@ import { ParsingModule } from './parsing/parsing.module';
 import { AreasModule } from './areas/areas.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { Area } from './areas/entities/area.entity';
+import { LogsModule } from './logs/logs.module';
+import { Log } from './logs/entities/log.entity';
 
 @Module({
   imports: [
@@ -92,6 +94,7 @@ import { Area } from './areas/entities/area.entity';
         Lead,
         User,
         Token,
+        Log,
       ],
       autoLoadModels: true,
     }),
@@ -113,6 +116,7 @@ import { Area } from './areas/entities/area.entity';
     PropertyTypesModule,
     // ParsingModule,
     AreasModule,
+    LogsModule,
   ],
   controllers: [],
   providers: [],

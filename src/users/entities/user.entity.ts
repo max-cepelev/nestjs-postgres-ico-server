@@ -7,6 +7,7 @@ import {
   Model,
   Table,
 } from 'sequelize-typescript';
+import { Log } from 'src/logs/entities/log.entity';
 import { Token } from 'src/tokens/entities/token.entity';
 import { Role } from '../../roles/entities/roles.entity';
 import { CreateUserDto } from '../dto/create-user-dto';
@@ -43,4 +44,7 @@ export class User extends Model<User, CreateUserDto> {
 
   @HasMany(() => Token)
   tokens: Token[];
+
+  @HasMany(() => Log)
+  logs: Log[];
 }

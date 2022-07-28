@@ -5,12 +5,14 @@ import * as bcrypt from 'bcryptjs';
 import { MailerService } from '@nestjs-modules/mailer';
 import { v4 as uuidv4 } from 'uuid';
 import { RegistrationDto } from './dto/registration.dto';
+import { LogsService } from 'src/logs/logs.service';
 
 @Injectable()
 export class AuthService {
   constructor(
-    private usersService: UsersService,
-    private tokensService: TokensService,
+    private readonly usersService: UsersService,
+    private readonly tokensService: TokensService,
+    private readonly logsService: LogsService,
     private readonly mailerService: MailerService,
   ) {}
 
@@ -36,7 +38,14 @@ export class AuthService {
       roleId: 4,
       isActivated: false,
     });
-
+    try {
+      await this.logsService.create({
+        operation: 'registration',
+        userId: user.id,
+      });
+    } catch (error) {
+      console.log(error);
+    }
     try {
       await this.mailerService.sendMail({
         to: 'dules@inbox.ru',
@@ -83,6 +92,14 @@ export class AuthService {
       } else {
         const user = await this.usersService.update(id, { isActivated: true });
         if (user) {
+          try {
+            await this.logsService.create({
+              operation: 'activation',
+              userId: id,
+            });
+          } catch (error) {
+            console.log(error);
+          }
           return { message: 'Пользователь активирован' };
         } else {
           throw new HttpException(
@@ -110,6 +127,14 @@ export class AuthService {
       }
       const tokens = this.tokensService.generateTokens(user);
       await this.tokensService.saveToken(user.id, tokens.refreshToken);
+      try {
+        await this.logsService.create({
+          operation: 'login',
+          userId: user.id,
+        });
+      } catch (error) {
+        console.log(error);
+      }
       return {
         ...tokens,
         user: {
@@ -155,6 +180,14 @@ export class AuthService {
     const user = await this.usersService.findOne(userData.userId);
     const tokens = this.tokensService.generateTokens(user);
     await this.tokensService.saveToken(user.id, tokens.refreshToken);
+    try {
+      await this.logsService.create({
+        operation: 'check',
+        userId: user.id,
+      });
+    } catch (error) {
+      console.log(error);
+    }
     return {
       ...tokens,
       user: {
