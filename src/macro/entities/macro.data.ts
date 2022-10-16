@@ -9,6 +9,11 @@ export interface IMacroData {
   estate_floor: number;
   estate_rooms: number | null;
   geo_flatnum: string | null;
+  estate_price_action: number | null;
   geo_house_entrance: number | null;
   plan_name: string | null;
+}
+
+export interface IFamalyMacroData {
+  records: IMacroData[];
 }

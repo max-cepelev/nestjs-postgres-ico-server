@@ -19,6 +19,7 @@ export class ParsingService {
     const url = `https://complex-api.domclick.ru/v4/layouts/?complex_id=${complexId}&limit=1000`;
     const browser = await puppeteer.use(StealthPlugin()).launch({
       headless: true,
+      args: ['--no-sandbox', '--disable-dev-shm-usage'],
     });
     const page = await browser.newPage();
     await page.waitForTimeout(1000);

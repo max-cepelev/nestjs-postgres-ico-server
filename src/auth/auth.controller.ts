@@ -3,7 +3,7 @@ import { AuthService } from './auth.service';
 import { Request, Response } from 'express';
 import { RegistrationDto } from './dto/registration.dto';
 
-const secure = true;
+const secure = false;
 const maxAge = 30 * 24 * 60 * 60 * 1000;
 const sameSite = 'none';
 const path = '/';

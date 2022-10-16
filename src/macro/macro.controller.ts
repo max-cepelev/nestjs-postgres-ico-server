@@ -5,11 +5,6 @@ import { MacroService } from './macro.service';
 export class MacroController {
   constructor(private readonly macroService: MacroService) {}
 
-  @Get('complexes')
-  getComplexes() {
-    return this.macroService.getComplexes();
-  }
-
   @Get('gavan')
   getGavan() {
     return this.macroService.getGavan();

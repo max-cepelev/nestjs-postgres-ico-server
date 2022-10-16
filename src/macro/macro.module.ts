@@ -1,16 +1,11 @@
 import { Module } from '@nestjs/common';
-import { HttpModule } from 'nestjs-http-promise';
+import { FetchModule } from 'src/fetch/fetch.module';
 import { MacroController } from './macro.controller';
 import { MacroService } from './macro.service';
 
 @Module({
   controllers: [MacroController],
   providers: [MacroService],
-  imports: [
-    HttpModule.register({
-      timeout: 1000,
-      retries: 5,
-    }),
-  ],
+  imports: [FetchModule],
 })
 export class MacroModule {}

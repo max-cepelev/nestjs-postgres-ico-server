@@ -114,7 +114,7 @@ import { Log } from './logs/entities/log.entity';
     RegionsModule,
     PropertiesModule,
     PropertyTypesModule,
-    // ParsingModule,
+    ParsingModule,
     AreasModule,
     LogsModule,
   ],
